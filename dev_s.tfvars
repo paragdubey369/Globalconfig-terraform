@@ -1,0 +1,16 @@
+control_nodes = {
+  node1 = {
+    name        = "control-1"
+    ip          = "priv-172-20-0-100.local"
+    gateway     = "priv-172-20-0-1.local"
+    dns_servers = ["1.1.1.1", "8.8.8.8"]
+    vm_id       = 104
+    memory      = 8192
+    cores       = 8
+    disk_size   = "32G"
+    template    = "rhel-template"
+    bridge      = "vmbr0"
+    storage     = "local-lvm"
+    node        = "proxmox32"
+  }
+}
