@@ -20,14 +20,14 @@ module "control_nodes" {
   vm_config = each.value
 }
 
-module "worker_nodes" {
-  source = "./modules/vm"
-  for_each = var.worker_nodes
-  vm_config = each.value
-}
+# module "worker_nodes" {
+#   source = "./modules/vm"
+#   for_each = var.worker_nodes
+#   vm_config = each.value
+# }
 
-module "bastion_nodes" {
-  source = "./modules/vm"
-  for_each = var.bastion_nodes
-  vm_config = each.value
-}
+# module "bastion_nodes" {
+#   source = "./modules/vm"
+#   for_each = var.bastion_nodes
+#   vm_config = each.value
+# }
