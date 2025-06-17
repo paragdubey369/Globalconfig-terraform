@@ -1,6 +1,6 @@
-pm_api_url           = "api_url"       # url of the proxmox server
-pm_api_token_id      = "api_token"                           # api token for access
-pm_api_token_secret  = "api_secret"
+pm_api_url           = var.api_url      # url of the proxmox server
+pm_api_token_id      = var.api_token                           # api token for access
+pm_api_token_secret  = var.api_secret
 
 
 
