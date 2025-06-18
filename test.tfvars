@@ -1,4 +1,4 @@
-environment_type = "uat"
+environment_type = "Test"
 
 galera_cluster_nocc = {
   nocc_node1 = {
