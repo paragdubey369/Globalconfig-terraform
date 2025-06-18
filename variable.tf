@@ -4,20 +4,16 @@
 
 
 
-variable "control_nodes" {
+variable "galera_cluster_nocc" {
   type = map(any)
   
 }
 
-variable "worker_nodes" {
+variable "maxscale_servers" {
   type = map(any)
   
 }
 
-variable "bastion_nodes" {
-  type = map(any)
-
-}
 
 
 variable "pm_api_url" {
