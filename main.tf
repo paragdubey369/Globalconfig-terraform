@@ -26,8 +26,25 @@ module "control_nodes" {
 #   vm_config = each.value
 # }
 
-# module "bastion_nodes" {
-#   source = "./modules/vm"
-#   for_each = var.bastion_nodes
-#   vm_config = each.value
-# }
+module "bastion_nodes" {
+  source = "./modules/vm"
+  for_each = var.bastion_nodes
+  vm_config = each.value
+}
+
+module "galera_cluster_nocc" {
+  source = "./modules/vm"
+  for_each = var.galera_cluster_nocc
+  vm_config = each.value
+}
+module "haproxy_nodes" {
+  source = "./modules/vm"
+  for_each = var.haproxy_nodes
+  vm_config = each.value
+}
+
+module "hauler_vm" {
+  source = "./modules/vm"
+  for_each = var.hauler_vm
+  vm_config = each.value
+}

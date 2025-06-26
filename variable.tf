@@ -14,10 +14,10 @@ variable "control_nodes" {
   
 # }
 
-# variable "bastion_nodes" {
-#   type = map(any)
+variable "bastion_nodes" {
+  type = map(any)
 
-# }
+}
 
 
 variable "pm_api_url" {
@@ -28,4 +28,19 @@ variable "pm_api_token_id" {
 }
 variable "pm_api_token_secret" {
   type = string
+}
+
+variable "haproxy_nodes" {
+  type = map(any)
+
+}
+
+variable "hauler_vm" {
+  type = map(any)
+
+}
+
+variable "galera_cluster_nocc" {
+  type = map(any)
+  
 }
