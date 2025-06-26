@@ -225,6 +225,3 @@ hauler_vm = {
     node = "proxmox32"
 }
 }
-
-
-
