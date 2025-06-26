@@ -184,23 +184,9 @@ hauler_vm = {
 }
 }
 
-Bastion_vm = {
-  bastion = {
-    name = "Bastion-1"
-    ip = "172.20.0.151"
-    gateway = "172.20.0.1"
-    dns_servers = ["1.1.1.1"]
-    vm_id = 151
-    memory = 4096
-    cores = 2
-    disk_size= "100G"
-    template = "rhel-template"
-    bridge = "vmbr0"
-    storage = "local-lvm"
-    node = "proxmox32"
-}
 
-}
+
+
 
 #  worker_nodes = {
 #   node1 = {
