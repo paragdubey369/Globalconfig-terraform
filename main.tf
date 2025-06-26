@@ -6,7 +6,7 @@ terraform {
     }
   }
 }
-provider "proxmox" {                                     # access
+provider "proxmox" {                                    
   pm_api_url          = var.pm_api_url
   pm_api_token_id     = var.pm_api_token_id
 pm_api_token_secret  = "REDACTED_USE_ENV"
