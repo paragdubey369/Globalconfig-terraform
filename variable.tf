@@ -50,7 +50,4 @@ variable "hauler_vm" {
   type = map(any)
 
 }
-variable "Bastion_vm" {
-  type = map(any)
 
-}
