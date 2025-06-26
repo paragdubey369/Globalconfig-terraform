@@ -55,8 +55,3 @@ module "hauler_vm" {
   for_each = var.hauler_vm
   vm_config = each.value
 }
-module "Bastion_vm" {
-  source = "./modules/vm"
-  for_each = var.Bastion_vm
-  vm_config = each.value
-}
