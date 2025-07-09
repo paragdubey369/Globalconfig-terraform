@@ -26,12 +26,12 @@ validate:
 plan:
   stage: plan
   script:
-    - terraform plan -var-file="uat.tfvars"
+    - terraform plan -var-file="test.tfvars"
 
 apply:
   stage: apply
   script:
-    - terraform apply -auto-approve -var-file="uat.tfvars"
+    - terraform apply -auto-approve -var-file="test.tfvars"
 
   artifacts:
     paths:
@@ -43,7 +43,7 @@ apply:
 destroy:
   stage: destroy
   script:
-    - terraform destroy -auto-approve -var-file="uat.tfvars"
+    - terraform destroy -auto-approve -var-file="test.tfvars"
   when: manual
   dependencies:
     - apply

@@ -9,10 +9,10 @@ variable "control_nodes" {
   
 }
 
-variable "worker_nodes" {
-  type = map(any)
+# variable "worker_nodes" {
+#   type = map(any)
   
-}
+# }
 
 variable "bastion_nodes" {
   type = map(any)
@@ -50,3 +50,7 @@ variable "hauler_vm" {
   type = map(any)
 
 }
+<<<<<<<< HEAD:environments/main/variable.tf
+========
+
+>>>>>>>> test:environments/test/variable.tf
