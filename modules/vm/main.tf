@@ -13,6 +13,7 @@ resource "proxmox_vm_qemu" "vm" {
   target_node = var.vm_config.node
   vmid        = var.vm_config.vm_id
   
+  
   memory      = var.vm_config.memory
   cpu {
   sockets     = 1
@@ -31,10 +32,12 @@ resource "proxmox_vm_qemu" "vm" {
     type = "cloudinit"
     storage = var.vm_config.storage
     slot = "scsi2"
+    
     }
     boot = "order=scsi0;scsi2;net0"
     bios = "seabios"
     scsihw = "virtio-scsi-single"
+    
  
 
   network {

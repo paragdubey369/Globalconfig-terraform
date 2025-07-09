@@ -1,29 +1,29 @@
 control_nodes = {
   node1 = {
     name        = "control-1"                                                                                                    
-    ip          = "lan-$1-$2.local"
-    gateway     = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-10.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 104
     memory      = 8192
     cores       = 8
     disk_size   = "40G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
   node2 = {
     name        = "control-2"
-    ip          = "lan-$1-$2.local"
-    gateway     = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-11.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 102
     memory      = 8192
     cores       = 8
     disk_size   = "40G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
@@ -31,15 +31,15 @@ control_nodes = {
     name        = "control-3"
     
 
-    ip          = "lan-$1-$2.local"
-    gateway     = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-12.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 103
     memory      = 8192
     cores       = 8
     disk_size   = "40G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
@@ -50,15 +50,15 @@ bastion_nodes = {
     name = "bastion-1"
     
 
-    ip = "lan-$1-$2.local"
-    gateway = "lan-$1-$2.local"
+    ip = "priv-172-17-0-13.local"
+    gateway = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1"]
     vm_id = 210
     memory = 4096
     cores = 8
     disk_size= "40G"
     template = "rhel"
-    bridge = "vmbr0"
+    bridge = "vmbr1"
     storage = "local-lvm"
     node = "proxmox32"
 }
@@ -68,17 +68,17 @@ galera_cluster_nocc = {
   nocc_node1 = {
     name        = "mariabd01"
     
-    ip          = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-14.local"
     server_id   = 1
     gtid_domain_id = 104
-    gateway     = "lan-$1-$2.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 108
     memory      = 16384
     cores       = 8
     disk_size   = "60G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
@@ -86,8 +86,8 @@ galera_cluster_nocc = {
     name        = "mariabd02"
     
 
-    ip          = "lan-$1-$2.local"
-    gateway     = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-15.local"
+    gateway     = "priv-172-17-0-1.local"
     server_id   = 1
     gtid_domain_id = 105
     dns_servers = ["1.1.1.1", "8.8.8.8"]
@@ -96,15 +96,15 @@ galera_cluster_nocc = {
     cores       = 8
     disk_size   = "60G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
   nocc_node3 = {
     name        = "mariadb03"
     
-    ip          = "lan-$1-$2.local"
-    gateway     = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-16.local"
+    gateway     = "priv-172-17-0-1.local"
     server_id   = 1
     gtid_domain_id = 106
     dns_servers = ["1.1.1.1", "8.8.8.8"]
@@ -113,7 +113,7 @@ galera_cluster_nocc = {
     cores       = 8
     disk_size   = "60G"
     template    = "rhel"
-    bridge      = "vmbr0"
+    bridge      = "vmbr1"
     storage     = "local-lvm"
     node        = "proxmox32"
   }
@@ -125,15 +125,15 @@ maxscale_servers = {
     name = "maxscale01"
     
 
-    ip = "lan-$1-$2.local"
-    gateway = "lan-$1-$2.local"
+    ip = "priv-172-17-0-17.local"
+    gateway = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1"]
     vm_id = 107
     memory = 4096
     cores = 2
-    disk_size= "20G"
+    disk_size= "40G"
     template = "rhel"
-    bridge = "vmbr0"
+    bridge = "vmbr1"
     storage = "local-lvm"
     node = "proxmox32"
 }
@@ -144,9 +144,9 @@ haproxy_nodes = {
     name        = "haproxy-primary"
    
 
-    ip          = "lan-$1-$2.local"
+    ip          = "priv-172-17-0-18.local"
     primary_ha =  "haproxy1"
-    gateway     = "lan-$1-$2.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 109
     memory      = 4096
@@ -161,9 +161,9 @@ haproxy_nodes = {
     name        = "haproxy-secondary"
     
 
-    ip          = "lan-$1-$2.local"
+    ip          ="priv-172-17-0-19.local"
     primary_ha =  "haproxy2"
-    gateway     = "lan-$1-$2.local"
+    gateway     = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1", "8.8.8.8"]
     vm_id       = 110
     memory      = 4096
@@ -183,15 +183,15 @@ hauler_vm = {
     name = "Hauler-1"
     
 
-    ip = "lan-$1-$2.local"
-    gateway = "lan-$1-$2.local"
+    ip = "priv-172-17-0-20.local"
+    gateway = "priv-172-17-0-1.local"
     dns_servers = ["1.1.1.1"]
-    vm_id = 150
+    vm_id = 111
     memory = 16384
     cores = 4
     disk_size= "200G"
     template = "rhel"
-    bridge = "vmbr0"
+    bridge = "vmbr1"
     storage = "local-lvm"
     node = "proxmox32"
 }
