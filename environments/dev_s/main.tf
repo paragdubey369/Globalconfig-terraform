@@ -40,11 +40,11 @@ module "galera_cluster_nocc" {
 
 
 
-module "maxscale_servers" {
-  source = "./modules/vm"
-  for_each = var.maxscale_servers
-  vm_config = each.value
-}
+# module "maxscale_servers" {
+#   source = "./modules/vm"
+#   for_each = var.maxscale_servers
+#   vm_config = each.value
+# }
 
 
 module "haproxy_nodes" {
