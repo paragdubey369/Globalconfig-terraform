@@ -47,18 +47,18 @@ create-infra:
       - environments/$ENV_DIR/.terraform
     expire_in: 2 hrs
 
-  destroy-infra:
-    stage: destroy
-    script:
+destroy-infra:
+  stage: destroy
+  script:
     - cd environments/$ENV_DIR
     - terraform destroy -$TF_APPROVE -var-file="$ENV_DIR.tfvars"
     when: manual
 
-    artifacts:
-      paths:
+  artifacts:
+    paths:
       - environments/$ENV_DIR/terraform.tfstate
       - environments/$ENV_DIR/outputs.json
       - environments/$ENV_DIR/terraform.tfstate.backup
       - environments/$ENV_DIR/.terraform
-      expire_in: 2 hrs
+    expire_in: 2 hrs
  
