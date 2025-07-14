@@ -1,0 +1,47 @@
+stages:
+  - check-infra
+  - create-infra
+  # - generate-inventory
+  # - run-ansible
+
+variables:
+  ENV_DIR: "uat"         # Default
+  TF_APPROVE: "-auto-approve"
+  TF_INPUT: "false"
+  # ANSIBLE_DIR: "playbooks"
+
+
+check-infra:
+  stage: check-infra
+  script:
+    - echo "Checking for infrastructure state..."
+    - |
+      if [ -f "environments/$ENV_DIR/terraform.tfstate" ]; then
+        echo "EXISTS=true" > env_status.txt
+      else
+        echo "EXISTS=false" > env_status.txt
+      fi
+  artifacts:
+    paths:
+      - env_status.txt
+    expire_in: 20 mins
+
+create-infra:
+  stage: create-infra
+  dependencies:
+    - check-infra
+  script:
+    - source env_status.txt
+    - cd environments/$ENV_DIR
+    - |
+      if [ "$EXISTS" == "false" ]; then
+        echo "Running terraform apply..."
+        terraform apply $TF_APPROVE -var-file="$ENV_DIR.tfvars"
+      else
+        echo "Infra already exists. Skipping apply."
+      fi
+  artifacts:
+    paths:
+      - environments/$ENV_DIR/terraform.tfstate
+      - environments/$ENV_DIR/outputs.json
+    expire_in: 2 hrs
