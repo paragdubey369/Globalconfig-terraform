@@ -1,7 +1,7 @@
 stages:
   - check-infra
   - create-infra
-  - destroy -infra
+  - destroy-infra
   # - generate-inventory
   # - run-ansible
 
