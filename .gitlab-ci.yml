@@ -52,7 +52,7 @@ destroy-infra:
   script:
     - cd environments/$ENV_DIR
     - terraform destroy -$TF_APPROVE -var-file="$ENV_DIR.tfvars"
-    when: manual
+  when: manual
 
   artifacts:
     paths:
