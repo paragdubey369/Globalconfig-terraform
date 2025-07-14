@@ -62,7 +62,7 @@ resource "proxmox_vm_qemu" "vm" {
   sshkeys = file("${path.module}/ssh.txt")
 
   
-<<<<<<<< HEAD:environments/test/modules/vm/main.tf
+
 
   force_recreate_on_change_of = sha1(join("", [
     var.vm_config.ip,
@@ -73,14 +73,9 @@ resource "proxmox_vm_qemu" "vm" {
   # lifecycle {                                    # this is introduced so that proxmox do not modify anything on its own 
   #   ignore_changes = [network, disk]
   # }
-========
->>>>>>>> dev_m:environments/dev_m/modules/vm/main.tf
 
-  force_recreate_on_change_of = sha1(join("", [
-    var.vm_config.ip,
-    var.vm_config.name,
-    file("${path.module}/ssh.txt")
-  ]))
+}
+
 
 
 
