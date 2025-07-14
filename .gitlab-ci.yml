@@ -1,7 +1,7 @@
 stages:
   - check-infra
   - create-infra
-  - destroy
+  - destroy -infra
   # - generate-inventory
   # - run-ansible
 
@@ -52,7 +52,7 @@ create-infra:
   destroy:
   stage: destroy
   script:
-
+    - cd environments/$ENV_DIR
     - terraform destroy -auto-approve -var-file="$ENV_DIR.tfvars"
   when: manual
 
