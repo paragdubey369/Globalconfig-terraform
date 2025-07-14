@@ -26,12 +26,20 @@ validate:
 plan:
   stage: plan
   script:
+<<<<<<<< HEAD:environments/main/.gitlab-ci.yml
     - terraform plan -var-file="test.tfvars"
+========
+    - terraform plan -var-file="dev_s.tfvars"
+>>>>>>>> dev_s:environment/dev_s/.gitlab-ci.yml
 
 apply:
   stage: apply
   script:
+<<<<<<<< HEAD:environments/main/.gitlab-ci.yml
     - terraform apply -auto-approve -var-file="test.tfvars"
+========
+    - terraform apply -auto-approve -var-file="dev_s.tfvars"
+>>>>>>>> dev_s:environment/dev_s/.gitlab-ci.yml
 
   artifacts:
     paths:
@@ -43,7 +51,11 @@ apply:
 destroy:
   stage: destroy
   script:
+<<<<<<<< HEAD:environments/main/.gitlab-ci.yml
     - terraform destroy -auto-approve -var-file="test.tfvars"
+========
+    - terraform destroy -auto-approve -var-file="dev_s.tfvars"
+>>>>>>>> dev_s:environment/dev_s/.gitlab-ci.yml
   when: manual
   dependencies:
     - apply
