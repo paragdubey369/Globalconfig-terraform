@@ -31,12 +31,25 @@ module "bastion_nodes" {
   for_each = var.bastion_nodes
   vm_config = each.value
 }
+<<<<<<<< HEAD:environments/dev_s/main.tf
 
+========
+>>>>>>>> dev_m:environments/dev_m/main.tf
 module "galera_cluster_nocc" {
   source = "./modules/vm"
   for_each = var.galera_cluster_nocc
   vm_config = each.value
 }
+<<<<<<<< HEAD:environments/dev_s/main.tf
+========
+
+module "maxscale_servers" {
+  source = "./modules/vm"
+  for_each = var.maxscale_servers
+  vm_config = each.value
+}
+
+>>>>>>>> dev_m:environments/dev_m/main.tf
 module "haproxy_nodes" {
   source = "./modules/vm"
   for_each = var.haproxy_nodes
