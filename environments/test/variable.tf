@@ -50,7 +50,4 @@ variable "hauler_vm" {
   type = map(any)
 
 }
-<<<<<<<< HEAD:environments/main/variable.tf
-========
 
->>>>>>>> test:environments/test/variable.tf

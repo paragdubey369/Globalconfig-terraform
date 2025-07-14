@@ -1,3 +1,4 @@
+environment_type = "uat"
 control_nodes = {
   node1 = {
     name        = "control-1"

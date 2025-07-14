@@ -20,21 +20,18 @@ module "control_nodes" {
   vm_config = each.value
 }
 
-# module "worker_nodes" {
-#   source = "./modules/vm"
-#   for_each = var.worker_nodes
-#   vm_config = each.value
-# }
+module "worker_nodes" {
+  source = "./modules/vm"
+  for_each = var.worker_nodes
+  vm_config = each.value
+}
 
 module "bastion_nodes" {
   source = "./modules/vm"
   for_each = var.bastion_nodes
   vm_config = each.value
 }
-<<<<<<<< HEAD:environments/main/main.tf
 
-========
->>>>>>>> test:environments/test/main.tf
 module "galera_cluster_nocc" {
   source = "./modules/vm"
   for_each = var.galera_cluster_nocc
@@ -58,7 +55,3 @@ module "hauler_vm" {
   for_each = var.hauler_vm
   vm_config = each.value
 }
-<<<<<<<< HEAD:environments/main/main.tf
-========
-
->>>>>>>> test:environments/test/main.tf
