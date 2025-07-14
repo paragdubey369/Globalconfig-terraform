@@ -48,7 +48,7 @@ create-infra:
     expire_in: 2 hrs
 
 destroy-infra:
-  stage: destroy
+  stage: destroy-infra
   script:
     - cd environments/$ENV_DIR
     - terraform destroy -$TF_APPROVE -var-file="$ENV_DIR.tfvars"
