@@ -9,10 +9,10 @@ variable "control_nodes" {
   
 }
 
-# variable "worker_nodes" {
-#   type = map(any)
+variable "worker_nodes" {
+  type = map(any)
   
-# }
+}
 
 variable "bastion_nodes" {
   type = map(any)
