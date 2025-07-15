@@ -1,6 +1,8 @@
 stages:
+  - fetch-state
   - check-infra
   - create-infra
+  - commit-state
   - destroy-infra
 
 variables:
@@ -8,18 +10,29 @@ variables:
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
 
+fetch-tfstate:
+  stage: fetch-state
+  script:
+    - echo "Fetching .tfstate from state branch..."
+    - git fetch origin state || echo "No state branch yet"
+    - git checkout origin/state -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
+    - git checkout origin/state -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
 check-infra:
   stage: check-infra
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
+    - terraform init -input=false
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
         echo "Resource count: $RESOURCE_COUNT"
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
-          echo "Infrastructure already exists. Skipping apply."
+          echo "Infrastructure exists. Skipping apply."
           touch infra_exists.flag
         else
           echo "No infrastructure found. Proceeding to create."
@@ -29,20 +42,12 @@ check-infra:
       fi
   artifacts:
     paths:
-      - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/terraform.tfstate.backup
-      - $ENV_DIR/.terraform
-      - $ENV_DIR/outputs.json
       - $ENV_DIR/infra_exists.flag
     expire_in: 1 hour
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
 
 create-infra:
   stage: create-infra
-  needs:
-    - check-infra
+  needs: [check-infra]
   script:
     - |
       if [ -f $ENV_DIR/infra_exists.flag ]; then
@@ -55,37 +60,28 @@ create-infra:
     paths:
       - $ENV_DIR/terraform.tfstate
       - $ENV_DIR/terraform.tfstate.backup
-      - $ENV_DIR/.terraform
-      - $ENV_DIR/outputs.json
-      - $ENV_DIR/infra_exists.flag
     expire_in: 2 hours
 
-sync-tfstate:
-  state: sync-state
+commit-state:
+  stage: commit-state
+  needs: [create-infra]
   script:
-    - echo "synching state file from artifacts to working directory"
-    - cp $ENV_DIR/terraform.tfstate environments/dev_s/terraform.tfstate
-    - cp $ENV_DIR/terraform.tfstate.backup environmnents/dev_s/terraform.tfstate.backup
-    - git config --global user.name "dubeyp"
-    - git config --global user.email "paragdubey007@gmail.com"
-    - git add environments/dev_s/terraform.tfstate environments/dev_s/terraform.tfstate.backup
-    - git commit -m "sync tfstate from artifacts [ci skip]" || echo "no changes"
-    - git push http:// dubeyp@gitlab.local/globalconfig HEAD:main
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
+    - echo "Committing updated tfstate to state branch..."
+    - git config user.email "paragdubey007@gmail.com"
+    - git config user.name "dubeyp"
+    - git remote set-url origin http:// $DEPLOY_USER:$DEPLOY_TOKEN@gitlab.local/dubeyp/globalconfig
+    - git fetch  origin main || git checkout -b main
+    - cp $ENV_DIR/terraform.tfstate .
+    - cp $ENV_DIR/terraform.tfstate.backup .
+    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup
+    - git commit -m "Update tfstate for dev_s [ci skip]" || echo "No changes to commit"
+    - git push origin main
+  only:
+    - main
 
 destroy-infra:
   stage: destroy-infra
-  needs:
-    - create-infra
   script:
     - cd $ENV_DIR
     - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="dev_s.tfvars"
   when: manual
-  artifacts:
-    paths:
-      - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/terraform.tfstate.backup
-      - $ENV_DIR/.terraform
-      - $ENV_DIR/outputs.json
-    expire_in: 2 hours
