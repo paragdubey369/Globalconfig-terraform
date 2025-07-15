@@ -35,6 +35,8 @@ check-infra:
 
 create-infra:
   stage: create-infra
+  needs:
+    - check-infra
   dependencies:
     - check-infra
   script:
@@ -55,6 +57,8 @@ create-infra:
 
 destroy-infra:
   stage: destroy-infra
+  needs:
+    - create-infra
   script:
     - cd $ENV_DIR
     - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="uat.tfvars"
