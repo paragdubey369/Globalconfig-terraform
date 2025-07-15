@@ -21,7 +21,7 @@ check-infra:
         echo "resource count: $RESOURCE_COUNT"
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
           echo "Infrastructure already exists. Skipping apply."
-          echo "true" ../../infra_exists.flag
+          echo "touch" ../../infra_exists.flag
         else
           echo "No infrastructure found. Will proceed to create."
         fi
