@@ -25,7 +25,6 @@ check-infra:
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
-    - terraform init -input=false
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
