@@ -68,7 +68,7 @@ commit-state:
     - echo "Committing updated tfstate to state branch..."
     - git config user.email "paragdubey007@gmail.com"
     - git config user.name "dubeyp"
-    - git remote set-url origin http:// $DEPLOY_USER:$DEPLOY_TOKEN@gitlab.local/dubeyp/globalconfig.git
+    - git remote set-url origin http://$DEPLOY_USER:$DEPLOY_TOKEN@gitlab.local/dubeyp/globalconfig.git
     - git fetch  origin main || git checkout -b main
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
