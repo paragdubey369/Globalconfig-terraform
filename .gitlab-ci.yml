@@ -2,35 +2,32 @@ stages:
   - check-infra
   - create-infra
   - destroy-infra
-  # - generate-inventory
-  # - run-ansible
 
 variables:
-  ENV_DIR: "environments/uat/uat"         # Default
-  TF_APPROVE: "-auto-approve"
+  ENV_DIR: "environments/uat"
+  TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
-  # ANSIBLE_DIR: "playbooks"
-
 
 check-infra:
   stage: check-infra
   script:
     - echo "Checking for infrastructure state..."
-    - terraform refresh -input=false || echo "refresh failed"
+    - cd $ENV_DIR
+    - terraform refresh -input=$TF_INPUT || echo "Refresh failed"
     - |
-      if [ -f "environments/$ENV_DIR/terraform.tfstate" ]; then
+      if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
-        echo "Infrastructure already exists. Skipping apply."
-        touch infra_exists.flag
+          echo "Infrastructure already exists. Skipping apply."
+          touch ../../infra_exists.flag
+        else
+          echo "No infrastructure found. Will proceed to create."
+        fi
       else
-        echo "no infrastructure found . proceed to create"
-      fi
-      else 
-        echo " no state file found will create"
+        echo "No state file found. Will proceed to create."
       fi
   only:
-    - tags   
+    - tags
   artifacts:
     paths:
       - infra_exists.flag
@@ -46,27 +43,26 @@ create-infra:
         echo "Infrastructure already exists. Skipping apply."
         exit 0
       fi
-      terraform apply  -$TF_APPROVE -var-file="$ENV_DIR.tfvars"
+    - cd $ENV_DIR
+    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="uat.tfvars"
   artifacts:
     paths:
-      - environments/$ENV_DIR/terraform.tfstate
-      - environments/$ENV_DIR/outputs.json
-      - environments/$ENV_DIR/terraform.tfstate.backup
-      - environments/$ENV_DIR/.terraform
+      - $ENV_DIR/terraform.tfstate
+      - $ENV_DIR/outputs.json
+      - $ENV_DIR/terraform.tfstate.backup
+      - $ENV_DIR/.terraform
     expire_in: 2 hrs
 
 destroy-infra:
   stage: destroy-infra
   script:
-    - cd environments/$ENV_DIR
-    - terraform destroy -$TF_APPROVE -var-file="$ENV_DIR.tfvars"
+    - cd $ENV_DIR
+    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="uat.tfvars"
   when: manual
-
   artifacts:
     paths:
-      - environments/$ENV_DIR/terraform.tfstate
-      - environments/$ENV_DIR/outputs.json
-      - environments/$ENV_DIR/terraform.tfstate.backup
-      - environments/$ENV_DIR/.terraform
+      - $ENV_DIR/terraform.tfstate
+      - $ENV_DIR/outputs.json
+      - $ENV_DIR/terraform.tfstate.backup
+      - $ENV_DIR/.terraform
     expire_in: 2 hrs
- 
