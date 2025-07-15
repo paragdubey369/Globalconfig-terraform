@@ -1,5 +1,5 @@
 stages:
-  - fetch-state
+  - fetch-main
   - check-infra
   - create-infra
   - commit-state
