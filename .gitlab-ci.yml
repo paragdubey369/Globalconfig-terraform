@@ -13,7 +13,8 @@ check-infra:
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
-    - terraform refresh -input=$TF_INPUT || echo "Refresh failed"
+    - terraform refresh -var-file="uat.tfvars" -input=$TF_INPUT || echo "Refresh failed"
+    - terraform state list -var-file="uat.tfvars"
     - |
       if [ -f "terraform.tfstate" ]; then
         export RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
