@@ -75,6 +75,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate.backup .
     - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup
     - git commit -m "Update tfstate for dev_s [ci skip]" || echo "No changes to commit"
+    - git pull --rebase origin main
     - git push origin main
   only:
     - main
