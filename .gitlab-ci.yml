@@ -60,6 +60,20 @@ create-infra:
       - $ENV_DIR/infra_exists.flag
     expire_in: 2 hours
 
+sync-tfstate:
+  state: sync-state
+  script:
+    - echo "synching state file from artifacts to working directory"
+    - cp $ENV_DIR/terraform.tfstate environments/dev_s/terraform.tfstate
+    - cp $ENV_DIR/terraform.tfstate.backup environmnents/dev_s/terraform.tfstate.backup
+    - git config --global user.name "dubeyp"
+    - git config --global user.email "paragdubey007@gmail.com"
+    - git add environments/dev_s/terraform.tfstate environments/dev_s/terraform.tfstate.backup
+    - git commit -m "sync tfstate from artifacts [ci skip]" || echo "no changes"
+    - git push http:// dubeyp@gitlab.local/globalconfig HEAD:main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
 destroy-infra:
   stage: destroy-infra
   needs:
