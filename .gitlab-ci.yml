@@ -11,12 +11,12 @@ variables:
   TF_INPUT: "false"
 
 fetch-tfstate:
-  stage: fetch-state
+  stage: fetch-main
   script:
-    - echo "Fetching .tfstate from state branch..."
-    - git fetch origin state || echo "No state branch yet"
-    - git checkout origin/state -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
-    - git checkout origin/state -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
+    - echo "Fetching .tfstate from main branch..."
+    - git fetch origin main || echo "No state branch yet"
+    - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
+    - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
