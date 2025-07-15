@@ -31,7 +31,11 @@ check-infra:
   
   artifacts:
     paths:
-      - infra_exists.flag
+      - $ENV_DIR/terraform.tfstate
+      - $ENV_DIR/outputs.json
+      - $ENV_DIR/terraform.tfstate.backup
+      - $ENV_DIR/.terraform
+      - $ENV_DIR/infra_exists.flag
     expire_in: 1 hour
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
@@ -57,6 +61,7 @@ create-infra:
       - $ENV_DIR/outputs.json
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/.terraform
+      - $ENV_DIR/infra_exists.flag
     expire_in: 2 hrs
 
 destroy-infra:
@@ -73,4 +78,5 @@ destroy-infra:
       - $ENV_DIR/outputs.json
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/.terraform
+      - $ENV_DIR/infra_exists.flag
     expire_in: 2 hrs
