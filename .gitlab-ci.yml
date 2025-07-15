@@ -14,43 +14,39 @@ check-infra:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
     - terraform refresh -var-file="uat.tfvars" -input=$TF_INPUT || echo "Refresh failed"
-    - terraform state list 
     - |
       if [ -f "terraform.tfstate" ]; then
-        export RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
-        echo "resource count: $RESOURCE_COUNT"
+        RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
+        echo "Resource count: $RESOURCE_COUNT"
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
           echo "Infrastructure already exists. Skipping apply."
-          echo "touch" ../../infra_exists.flag
+          touch infra_exists.flag
         else
-          echo "No infrastructure found. Will proceed to create."
+          echo "No infrastructure found. Proceeding to create."
         fi
       else
-        echo "No state file found. Will proceed to create."
+        echo "No terraform.tfstate found. Proceeding to create."
       fi
-  
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/outputs.json
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/.terraform
+      - $ENV_DIR/outputs.json
       - $ENV_DIR/infra_exists.flag
     expire_in: 1 hour
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always  
+      when: always
 
 create-infra:
   stage: create-infra
   needs:
     - check-infra
-  dependencies:
-    - check-infra
   script:
     - |
-      if [ -f infra_exists.flag ]; then
-        echo "Infrastructure already exists. Skipping apply."
+      if [ -f $ENV_DIR/infra_exists.flag ]; then
+        echo "Infra already exists. Skipping apply."
         exit 0
       fi
     - cd $ENV_DIR
@@ -58,11 +54,11 @@ create-infra:
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/outputs.json
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/.terraform
+      - $ENV_DIR/outputs.json
       - $ENV_DIR/infra_exists.flag
-    expire_in: 2 hrs
+    expire_in: 2 hours
 
 destroy-infra:
   stage: destroy-infra
@@ -75,8 +71,7 @@ destroy-infra:
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/outputs.json
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/.terraform
-      - $ENV_DIR/infra_exists.flag
-    expire_in: 2 hrs
+      - $ENV_DIR/outputs.json
+    expire_in: 2 hours
