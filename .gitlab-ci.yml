@@ -16,22 +16,25 @@ check-infra:
     - terraform refresh -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
-        RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
+        export RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
+        echo "resource count: $RESOURCE_COUNT"
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
           echo "Infrastructure already exists. Skipping apply."
-          touch ../../infra_exists.flag
+          echo "true" ../../infra_exists.flag
         else
           echo "No infrastructure found. Will proceed to create."
         fi
       else
         echo "No state file found. Will proceed to create."
       fi
-  only:
-    - tags
+  
   artifacts:
     paths:
       - infra_exists.flag
     expire_in: 1 hour
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always  
 
 create-infra:
   stage: create-infra
