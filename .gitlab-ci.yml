@@ -6,7 +6,7 @@ stages:
   # - run-ansible
 
 variables:
-  ENV_DIR: "uat"         # Default
+  ENV_DIR: "environments/uat/uat"         # Default
   TF_APPROVE: "-auto-approve"
   TF_INPUT: "false"
   # ANSIBLE_DIR: "playbooks"
@@ -29,6 +29,8 @@ check-infra:
       else 
         echo " no state file found will create"
       fi
+  only:
+    - tags   
   artifacts:
     paths:
       - infra_exists.flag
