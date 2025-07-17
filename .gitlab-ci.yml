@@ -26,15 +26,14 @@ check-infra:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
+    - terraform plan -detailed-exitcode -input=$TF_INPUT -var-file="dev_s.tfvars"  -out=tfplan
+    - $EXIT_CODE=$? 
     - |
-      terraform plan -detailed-exitcode -var-file="dev_s.tfvars" -input=$TF_INPUT -out=tfplan
-      $EXIT_CODE=$? 
       if [ -f "EXIT_CODE" -eq 0 ]; then
         echo "no changes required.skipping apply"
         touch infra_exists.flag
       elif ["$EXIT_CODE" -eq 2]; then
           echo "mismatch. Proceeding to create."
-        
       else
         echo "No terraform.tfstate found. error."
         exit 1
@@ -43,6 +42,7 @@ check-infra:
   artifacts:
     paths:
       - $ENV_DIR/infra_exists.flag
+      - $ENV_DIR/tfplan
     expire_in: 1 hour
 
 create-infra:
