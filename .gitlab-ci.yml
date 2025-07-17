@@ -27,22 +27,29 @@ check-infra:
     - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
+<<<<<<< HEAD
       terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" 
       EXIT_CODE=$? 
       if [  $EXIT_CODE -eq 0 ]; then
+=======
+      EXIT_CODE=0
+      terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" || EXIT_CODE=$? 
+      
+      if [  "$EXIT_CODE" -eq 0 ]; then
+>>>>>>> 99657af (ci)
         echo "no changes required.skipping apply"
-        touch infra_exists.flag
-      elif [ $EXIT_CODE -eq 2]; then
+        touch no_changes.flag
+      elif [ "$EXIT_CODE" -eq 2]; then
         echo "mismatch. Proceeding to create."
       else
         echo "No terraform.tfstate found. error."
         exit 1
       fi
         
-  allow_failure: false
+ 
   artifacts:
     paths:
-      - $ENV_DIR/infra_exists.flag
+      - $ENV_DIR/no_changes.flag
       - $ENV_DIR/tfplan
     expire_in: 1 hour
 
@@ -51,7 +58,7 @@ create-infra:
   needs: [check-infra]
   script:
     - |
-      if [ -f $ENV_DIR/infra_exists.flag ]; then
+      if [ -f $ENV_DIR/no_changes.flag ]; then
         echo "Infra already exists. Skipping apply."
         exit 0
       fi
