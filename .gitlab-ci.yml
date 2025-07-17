@@ -27,7 +27,7 @@ check-infra:
     - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
-      terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" 
+      terraform plan -detailed-exitcode  -input=$TF_INPUT -var-file="dev_s.tfvars" 
       EXIT_CODE=$? 
       if [  $EXIT_CODE -eq 0 ]; then
 
