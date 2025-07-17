@@ -27,28 +27,22 @@ check-infra:
     - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
-      terraform plan -detailed-exitcode  -input=$TF_INPUT -var-file="dev_s.tfvars" 
-      EXIT_CODE=$? 
-      if [  $EXIT_CODE -eq 0 ]; then
-
-      EXIT_CODE=0
-      terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" || EXIT_CODE=$? 
-      
-      if [  "$EXIT_CODE" -eq 0 ]; then
-        echo "no changes required.skipping apply"
-        touch no_changes.flag
-      elif [ "$EXIT_CODE" -eq 2]; then
-        echo "mismatch. Proceeding to create."
+      if [ -f "terraform.tfstate" ]; then
+        RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
+        echo "Resource count: $RESOURCE_COUNT"
+        if [ "$RESOURCE_COUNT" -gt 0 ]; then
+          echo "Infrastructure exists. Skipping apply."
+          touch infra_exists.flag
+        else
+          echo "No infrastructure found. Proceeding to create."
+        fi
       else
-        echo "No terraform.tfstate found. error."
-        exit 1
+        echo "No terraform.tfstate found. Proceeding to create."
       fi
-        
- 
+
   artifacts:
     paths:
-      - $ENV_DIR/no_changes.flag
-      - $ENV_DIR/tfplan
+      - $ENV_DIR/infra_exists.flag
     expire_in: 1 hour
 
 create-infra:
@@ -56,7 +50,7 @@ create-infra:
   needs: [check-infra]
   script:
     - |
-      if [ -f $ENV_DIR/no_changes.flag ]; then
+      if [ -f $ENV_DIR/infra_exists.flag ]; then
         echo "Infra already exists. Skipping apply."
         exit 0
       fi
