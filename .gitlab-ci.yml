@@ -27,16 +27,14 @@ check-infra:
     - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
-<<<<<<< HEAD
       terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" 
       EXIT_CODE=$? 
       if [  $EXIT_CODE -eq 0 ]; then
-=======
+
       EXIT_CODE=0
       terraform plan -detailed-exitcode -out=tfplan -input=$TF_INPUT -var-file="dev_s.tfvars" || EXIT_CODE=$? 
       
       if [  "$EXIT_CODE" -eq 0 ]; then
->>>>>>> 99657af (ci)
         echo "no changes required.skipping apply"
         touch no_changes.flag
       elif [ "$EXIT_CODE" -eq 2]; then
