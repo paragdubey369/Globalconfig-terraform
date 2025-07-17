@@ -33,7 +33,8 @@ check-infra:
         echo "no changes required.skipping apply"
         touch infra_exists.flag
       elif ["$EXIT_CODE" -eq 2]; then
-          echo "mismatch. Proceeding to create."
+        echo "mismatch. Proceeding to create."
+        exit 0
       else
         echo "No terraform.tfstate found. error."
         exit 1
