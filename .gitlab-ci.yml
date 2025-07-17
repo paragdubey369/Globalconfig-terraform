@@ -25,20 +25,28 @@ check-infra:
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
+  check-infra:
+  stage: check-infra
+  script:
+    - echo "Checking for infrastructure state..."
+    - cd $ENV_DIR
     - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
-    - terraform plan -var-file="dev_s.tfvars" -input=$TF_INPUT -detailed-exitcode
-    - EXIT_CODE=$?
     - |
-      if [ "$EXIT_CODE" -eq 0 ]; then
-        echo "infrastructure present. skip apply"
+      if [ -f "terraform.tfstate" ]; then
+        RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
+        echo "Resource count: $RESOURCE_COUNT"
+        ACTUAL_COUNT=$(terraform plan -var-file="dev_s.tfvars" -input=$TF_INPUT | grep -c "^ #")
+        if [ "$RESOURCE_COUNT" -eq "$ACTUAL_COUNT" ]; then
+          echo "Infrastructure exists. Skipping apply."
           touch infra_exists.flag
-      elif ["$EXIT_CODE" -eq 2]; then
-          echo "not up to date with the folder. Proceeding to create."
-        
+        else
+          echo "No infrastructure found/mismatch. Proceeding to create."
+        fi
       else
-        echo "No terraform.tfstate found. plan failed."
-        exit 1
+        echo "No terraform.tfstate found. Proceeding to create."
       fi
+  artifacts:
+
   artifacts:
     paths:
       - $ENV_DIR/infra_exists.flag
