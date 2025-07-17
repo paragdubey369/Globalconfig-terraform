@@ -30,7 +30,7 @@ check-infra:
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
         echo "Resource count: $RESOURCE_COUNT"
-        ACTUAL_COUNT=$(terraform plan -var-file="dev_s.tfvars" -input=$TF_INPUT | grep -c "^ #")
+        ACTUAL_COUNT=$(terraform plan -var-file="dev_s.tfvars" -input=$TF_INPUT 2>/dev/null | wc -l)
         if [ "$RESOURCE_COUNT" -eq "$ACTUAL_COUNT" ]; then
           echo "Infrastructure exists. Skipping apply."
           touch infra_exists.flag
