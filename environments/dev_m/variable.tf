@@ -38,10 +38,10 @@ variable "galera_cluster_nocc" {
   
 }
 
-variable "maxscale_servers" {
-  type = map(any)
+# variable "maxscale_servers" {
+#   type = map(any)
   
-}
+# }
 
 
 variable "haproxy_nodes" {
