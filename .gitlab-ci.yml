@@ -26,7 +26,7 @@ check-infra:
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
-    - terraform refresh -var-file=$env -input=$TF_INPUT || echo "Refresh failed"
+    - terraform refresh -var-file=$env-input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
