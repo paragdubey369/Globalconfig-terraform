@@ -57,12 +57,12 @@ create-infra:
       fi
     - cd $ENV_DIR
     - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars" 
-    - terraform output -json > $ENV_DIR/$env.json
+    - terraform output -json > $ENV_DIR/dev_m.json
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
       - $ENV_DIR/terraform.tfstate.backup
-      - $ENV_DIR/$env.json
+      - $ENV_DIR/dev_m.json
     expire_in: 2 hours
 
 commit-state:
@@ -78,7 +78,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/$env.json
-    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/$env.json
+    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/dev_m.json
     - git commit -m "Update tfstate for dev_s [ci skip]" || echo "No changes to commit"
     - git pull --rebase origin main
     - git push origin main
