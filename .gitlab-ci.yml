@@ -57,7 +57,7 @@ create-infra:
       fi
     - cd $ENV_DIR
     - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars" 
-    - terraform output -json > $ENV_DIR/dev_m.json
+    - terraform output -json > dev_m.json
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
