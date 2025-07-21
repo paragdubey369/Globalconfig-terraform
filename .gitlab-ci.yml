@@ -6,7 +6,7 @@ stages:
   - destroy-infra
 
 variables:
-  ENV_DIR: "environments/dev_s"
+  ENV_DIR: "environments/dev_m"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
 
@@ -25,7 +25,7 @@ check-infra:
   script:
     - echo "Checking for infrastructure state..."
     - cd $ENV_DIR
-    - terraform refresh -var-file="dev_s.tfvars" -input=$TF_INPUT || echo "Refresh failed"
+    - terraform refresh -var-file="dev_m.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
@@ -55,7 +55,7 @@ create-infra:
         exit 0
       fi
     - cd $ENV_DIR
-    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="dev_s.tfvars"
+    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars"
   artifacts:
     paths:
       - $ENV_DIR/terraform.tfstate
@@ -85,5 +85,5 @@ destroy-infra:
   stage: destroy-infra
   script:
     - cd $ENV_DIR
-    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="dev_s.tfvars"
+    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars"
   when: manual
