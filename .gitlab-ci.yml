@@ -28,7 +28,6 @@ check-infra:
     - echo "Checking for infrastructure state..."
     - git checkout main -- $ENV_DIR/terraform.tfstate 
     - cd $ENV_DIR
-    - terraform init -backend=false
     - terraform refresh -var-file="dev_m.tfvars" -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
