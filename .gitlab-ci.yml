@@ -77,6 +77,7 @@ commit-state:
     - git checkout -f main || git checkout -b main
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
+    - ls -lah environments/dev_m/
     - cp $ENV_DIR/dev_m.json .
     - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/dev_m.json
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
