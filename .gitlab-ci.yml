@@ -14,11 +14,15 @@ variables:
 
 fetch-tfstate:
   stage: fetch-main
+  variables:
+    GIT_STRATEGY: fetch
   script:
     - echo "Fetching .tfstate from main branch..."
     - git fetch origin main || echo "No state branch yet"
     - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
     - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
+    - git checkout main -- $ENV_DIR/output.json
+    - git checkout main -- $ENV_DIR/inventory.ini
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
@@ -95,9 +99,10 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.ini .
-    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/inventory.ini
+    - cp $ENV_DIR/output.json .
+    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/inventory.ini $ENV_DIR/output.json
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
-    - git pull --rebase origin main
+    - git pull --no-rebase origin main
     - git push origin main
   only:
     - main
