@@ -39,6 +39,7 @@ check-infra:
         if [ "$RESOURCE_COUNT" -gt 0 ]; then
           echo "Infrastructure exists. Skipping apply."
           touch infra_exists.flag
+          terraform output -json > output.json
         else
           echo "No infrastructure found. Proceeding to create."
         fi
@@ -49,6 +50,7 @@ check-infra:
   artifacts:
     paths:
       - $ENV_DIR/infra_exists.flag
+      - $ENV_DIR/output.json
     expire_in: 1 hour
 
 create-infra:
@@ -58,7 +60,6 @@ create-infra:
     - |
       if [ -f $ENV_DIR/infra_exists.flag ]; then
         echo "Infra already exists. Skipping apply."
-        - terraform output -json > output.json
         exit 0
       fi
     - cd $ENV_DIR
