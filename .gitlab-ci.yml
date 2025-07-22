@@ -58,6 +58,7 @@ create-infra:
     - |
       if [ -f $ENV_DIR/infra_exists.flag ]; then
         echo "Infra already exists. Skipping apply."
+        - terraform output -json > output.json
         exit 0
       fi
     - cd $ENV_DIR
