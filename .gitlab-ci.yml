@@ -73,7 +73,8 @@ generate-ini:
   script:
     - python3 json_to_ini_inventory.py $ENV_DIR/output.json $ENV_DIR/inventory.ini
   artifacts:
-    - $ENV_DIR/inventory.ini
+    paths:
+      - $ENV_DIR/inventory.ini
 
 
 commit-state:
