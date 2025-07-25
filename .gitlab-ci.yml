@@ -126,13 +126,14 @@ ssh_script:
   stage: ssh-script
   needs: [compare-config]
   script:
-    - mkdir -p ~/ .ssh
-    - chmod 700 ~/ .ssh
-    - cd .ssh
-    - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ./id_rsa
-    - chmod 600 ~/ ./id_rsa
-    - ssh-keyscan -H 172.17.0.30 >> ~/ .ssh/known_hosts
-  
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - |
+      cat <<EOF > ~/.ssh/id_rsa
+      $ANSIBLE_SSH_PRIVATE_KEY
+      EOF
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H 172.17.0.30 >> ~/.ssh/known_hosts
 
 install-platform:
   stage: install-platform
