@@ -133,7 +133,7 @@ ssh_script:
       $ANSIBLE_SSH_PRIVATE_KEY
       EOF
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H priv-172-17-0-30.local >> ~/.ssh/known_hosts
+    - ssh-keyscan -H priv-172-19-0-30.local >> ~/.ssh/known_hosts
 
 install-platform:
   stage: install-platform
@@ -141,7 +141,7 @@ install-platform:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no ansible@priv-172-17-0-30.local <<'EOF'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
