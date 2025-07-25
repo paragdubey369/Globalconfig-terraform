@@ -123,7 +123,7 @@ compare-config:
 
 before_script:
   - mkdir -p ~/ .ssh
-  - echo "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
+  - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
   - chmod 600 ~/ .ssh/id_rsa
   - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
   
