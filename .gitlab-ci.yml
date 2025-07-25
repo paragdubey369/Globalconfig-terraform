@@ -4,6 +4,8 @@ stages:
   - create-infra
   - generate-yml
   - commit-state
+  - compare-config
+  - install-platform
   - destroy-infra
 
 variables:
@@ -104,6 +106,38 @@ commit-state:
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
+  only:
+    - main
+
+compare-config:
+  stage: compare-config
+  needs: [commit-state]
+  script:
+    - python3 compareini_yml.py
+  artifacts:
+    when: always
+    path: 
+      - comparison_logs/
+    only:
+      - main
+
+install-platform:
+  stage: install-platform
+  needs: [compare-config]
+  before script:
+    - mkdir -p ~/ .ssh
+    - echo "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
+    - chmod 600 ~/ .ssh/id_rsa
+    - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
+  script:
+    - echo"now installing different components on the vm's"
+    - |
+      ssh ansible@priv-172-17-0-30.local <<EOF
+        set -ex
+        cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
+        echo "installing rke2"
+        ansible-playbook -i inventories/dev_m.yml playbooks/site.yml
+      EOF
   only:
     - main
 
