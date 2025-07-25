@@ -52,7 +52,7 @@ bastion_nodes = {
 
 galera_cluster_nocc = {
   nocc_node1 = {
-    name        = "mariabd01"
+    name        = "mariadb01"
     ip          = "priv-172-17-0-204.local"
     server_id   = 1
     gtid_domain_id = 104
@@ -118,7 +118,7 @@ galera_cluster_nocc = {
 }
 haproxy_nodes = {
   primary_group = {
-    name        = "haproxy-primary"
+    name        = "haproxy1"
     ip          = "priv-172-17-0-209.local"
     primary_ha =  "haproxy1"
     gateway     = "priv-172-17-0-1.local"

@@ -6,7 +6,7 @@ all:
       children:
         primary_group:
           hosts:
-            haproxy_primary:
+            haproxy-primary:
               ansible_host: priv-172-17-0-209.local
               primary_ha: haproxy1
               ansible_user: rhel
