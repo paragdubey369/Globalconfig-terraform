@@ -2,7 +2,7 @@ stages:
   - fetch-main
   - check-infra
   - create-infra
-  - generate-ini
+  - generate-yml
   - commit-state
   - destroy-infra
 
@@ -21,7 +21,7 @@ fetch-tfstate:
     - git fetch origin main || echo "No state branch yet"
     - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
     - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
-    - git checkout main -- $ENV_DIR/inventory.ini
+    # - git checkout main -- $ENV_DIR/inventory.yml
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
@@ -73,14 +73,14 @@ create-infra:
     expire_in: 2 hours
 
 
-generate-ini:
-  stage: generate-ini
+generate-yml:
+  stage: generate-yml
   needs: [create-infra]
   script:
-    - python3 environments/json_to_ini.py $ENV_DIR/output.json $ENV_DIR/inventory.ini
+    - python3 environments/json_to_ini.py $ENV_DIR/output.json $ENV_DIR/inventory.yml
   artifacts:
     paths:
-      - $ENV_DIR/inventory.ini
+      - $ENV_DIR/inventory.yml
 
 
 commit-state:
@@ -88,7 +88,7 @@ commit-state:
   needs: 
     - job: create-infra
       artifacts: true
-    - job: generate-ini
+    - job: generate-yml
       artifacts: true  
   script:
     - echo "Committing updated tfstate to state branch..."
@@ -99,8 +99,8 @@ commit-state:
     - git checkout -f main || git checkout -b main
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
-    - cp $ENV_DIR/inventory.ini .
-    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/inventory.ini 
+    - cp $ENV_DIR/inventory.yml .
+    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/inventory.yml 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
