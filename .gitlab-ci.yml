@@ -138,7 +138,7 @@ install-platform:
   stage: install-platform
   needs: [compare-config]
   script:
-    - echo"now installing different components on the vm's"
+    - echo "now installing different components on the vm's"
     - |
       ssh -o StrictHostKeyChecking=no ansible@172.17.0.30 <<'EOF'
         set -ex
