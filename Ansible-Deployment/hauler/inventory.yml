@@ -1,0 +1,9 @@
+all:
+  children:
+    hauler_node:
+      hosts:
+        hauler-server:
+          ansible_host: 172.17.0.20
+          node_name: HaulerRegistryFileserver
+          ansible_user: rhel
+          ansible_password: "{{ vault_sysuser_password }}"

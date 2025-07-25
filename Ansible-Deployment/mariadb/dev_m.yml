@@ -1,0 +1,12 @@
+all:
+  vars:
+    environment_type: "DEV-M"
+    auto20_remote_user: rhel
+  children:
+    galera_cluster_nocc:
+      hosts:
+        nocc-node1:
+          ansible_host: 172.17.0.204
+          wsrep_node_name: mariadb01
+          server_id: 1
+          gtid_domain_id: 104
