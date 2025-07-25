@@ -1,0 +1,30 @@
+# DEV-M: Medium Development Environment
+# 1 Master node and 1-n worker nodes with bastion
+all:
+  vars:
+    #DO NOT MODIFY ansible_user. This user will be used to SSH to inventory nodes. 
+    ansible_user: rhel
+    #DO NOT MODIFY ansible_password. This is the password for the SSH user. The password will be maintained as part of vault. 
+    ansible_password: "{{ vault_sysuser_password }}"
+    environment_type: "DEV-M"
+  children:
+    control_nodes:
+      hosts:
+        control-node-1:
+          ansible_host: 172.17.0.200
+          node_name: control-1
+    worker_nodes:
+      hosts:
+        worker-node-1:
+          ansible_host: 172.17.0.201
+          node_name: worker-1
+        # Add more worker nodes as needed:
+        # worker-node-2:
+        #   ansible_host: 172.20.0.104
+        #   node_name: workernode-2
+        
+    bastion:
+      hosts:
+        bastion-host:
+          ansible_host: 172.17.0.210
+          node_name: bastion-1
