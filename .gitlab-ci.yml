@@ -21,7 +21,7 @@ fetch-tfstate:
     - git fetch origin main || echo "No state branch yet"
     - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
     - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
-    - git checkout main -- $ENV_DIR/inventory.yml
+    # - git checkout main -- $ENV_DIR/inventory.yml
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
