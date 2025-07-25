@@ -5,6 +5,7 @@ stages:
   - generate-yml
   - commit-state
   - compare-config
+  - ssh-script
   - install-platform
   - destroy-infra
 
@@ -121,13 +122,16 @@ compare-config:
   only:
     - main
 
-before_script:
-  - mkdir -p ~/ .ssh
-  - chmod 700 ~/ .ssh
-  - cd .ssh
-  - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ./id_rsa
-  - chmod 600 ~/ ./id_rsa
-  - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
+ssh_script:
+  stage: ssh-script
+  needs: [compare-config]
+  script:
+    - mkdir -p ~/ .ssh
+    - chmod 700 ~/ .ssh
+    - cd .ssh
+    - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ./id_rsa
+    - chmod 600 ~/ ./id_rsa
+    - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
   
 
 install-platform:
