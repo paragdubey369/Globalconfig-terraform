@@ -123,9 +123,10 @@ compare-config:
 
 before_script:
   - mkdir -p ~/ .ssh
-  - echo "$ANSIBLE_SSH_PRIVATE_KEY" | tr -d '/r' > ~/ .ssh/id_rsa
+  - echo "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
   - chmod 600 ~/ .ssh/id_rsa
   - ssh-keyscan -H 172.17.0.30 >> ~/ .ssh/known_hosts
+  
 
 install-platform:
   stage: install-platform
@@ -133,7 +134,7 @@ install-platform:
   script:
     - echo"now installing different components on the vm's"
     - |
-      ssh ansible@172.17.0.30 <<EOF
+      ssh -o StrictHostKeyChecking=no ansible@172.17.0.30 <<'EOF'
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
