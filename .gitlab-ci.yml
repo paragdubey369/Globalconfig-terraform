@@ -116,19 +116,20 @@ compare-config:
     - python3 compareini_yml.py
   artifacts:
     when: always
-    path: 
+    paths: 
       - comparison_logs/
-    only:
-      - main
+  only:
+    - main
+
+before_script:
+  - mkdir -p ~/ .ssh
+  - echo "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
+  - chmod 600 ~/ .ssh/id_rsa
+  - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
 
 install-platform:
   stage: install-platform
   needs: [compare-config]
-  before script:
-    - mkdir -p ~/ .ssh
-    - echo "$ANSIBLE_SSH_PRIVATE_KEY" > ~/ .ssh/id_rsa
-    - chmod 600 ~/ .ssh/id_rsa
-    - ssh-keyscan -H priv-172-17-0-30.local >> ~/ .ssh/known_hosts
   script:
     - echo"now installing different components on the vm's"
     - |
