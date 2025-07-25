@@ -73,7 +73,7 @@ create-infra:
     expire_in: 2 hours
 
 
-generate-ini:
+generate-yml:
   stage: generate-ini
   needs: [create-infra]
   script:
