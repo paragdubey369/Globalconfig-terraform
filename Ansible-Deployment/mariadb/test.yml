@@ -1,0 +1,29 @@
+# TEST: HA Test Environment
+# One Master node and 2 slaves mariadb nodes with one Maxscale server
+all:
+  vars:
+    environment_type: "TEST"
+    auto20_remote_user: rhel
+  children:
+    galera_cluster_nocc:
+      hosts:
+        nocc-node1:
+          ansible_host: priv-172-17-0-14.local
+          wsrep_node_name: mariadb01
+          server_id: 1
+          gtid_domain_id: 104
+        nocc-node2:
+          ansible_host: priv-172-17-0-15.local
+          wsrep_node_name: mariadb02
+          server_id: 1
+          gtid_domain_id: 105
+        nocc-node3:
+          ansible_host: priv-172-17-0-16.local
+          wsrep_node_name: mariadb03
+          server_id: 1
+          gtid_domain_id: 106
+
+    maxscale_servers:
+      hosts:
+        maxscale_nocc:
+          ansible_host: priv-172-17-0-17.local
