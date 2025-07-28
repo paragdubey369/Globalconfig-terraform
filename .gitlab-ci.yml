@@ -14,7 +14,9 @@ variables:
   ENV_DIR: "environments/dev_m"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
-  env: "dev_m.tfvars"
+  TF_env: "dev_m.tfvars"
+  COMPARE_ENV: dev_m
+  ANSIBLE_ENV: "dev-m.yml"
   EXPECTED_RESOURCE_COUNT: "5"
 
 fetch-tfstate:
@@ -36,7 +38,7 @@ check-infra:
     - echo "Checking for infrastructure state..."
     - git checkout main -- $ENV_DIR/terraform.tfstate 
     - cd $ENV_DIR
-    - terraform refresh -var-file="dev_m.tfvars" -input=$TF_INPUT || echo "Refresh failed"
+    - terraform refresh -var-file=$TF_env -input=$TF_INPUT || echo "Refresh failed"
     - |
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
@@ -71,7 +73,7 @@ create-infra:
         exit 0
       fi
     - cd $ENV_DIR
-    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars" 
+    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env 
     - terraform output -json > output.json
   artifacts:
     paths:
@@ -127,7 +129,7 @@ compare-config:
   stage: compare-config
   needs: [commit-state]
   script:
-    - python3 compareini_yml.py
+    - python3 compareini_yml.py --env $COMPARE_ENV
   artifacts:
     when: always
     paths: 
@@ -149,7 +151,7 @@ install-rke2:
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
-        ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
+        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
       EOF
   only:
     - 'triggers'
@@ -167,7 +169,7 @@ install-haproxy:
         set -ex
         cd /home/ansible/ansible/haproxy-hauler-playbook-main
         echo "installing haproxy"
-        ansible-playbook -i inventories/dev-m.yml playbooks/haproxy.yml
+        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/haproxy.yml
       EOF
   only:
     - 'triggers'
@@ -185,7 +187,7 @@ install-mariadb:
         set -ex
         cd /home/ansible/ansible/mariadb-hauler-community-main
         echo "installing mariadb"
-        ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
+        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
       EOF
   only:
     - 'triggers'
@@ -196,5 +198,5 @@ destroy-infra:
   stage: destroy-infra
   script:
     - cd $ENV_DIR
-    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file="dev_m.tfvars" 
+    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
   when: manual
