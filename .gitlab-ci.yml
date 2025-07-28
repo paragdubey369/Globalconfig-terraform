@@ -141,7 +141,7 @@ install-platform:
     - echo "now installing different components on the vm's"
     - |
       ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
-      ssh -o StrictHostKeyChecking=no ansible@priv-172-17-0-30.local <<'EOF'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
