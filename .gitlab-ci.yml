@@ -5,6 +5,8 @@ stages:
   - generate-yml
   - commit-state
   - compare-config
+  - install-hauler
+  - copy-certificate
   - install-rke2
   - install-haproxy
   - install-mariadb
@@ -17,7 +19,7 @@ variables:
   TF_env: "dev_s.tfvars"
   COMPARE_ENV: dev_s
   ANSIBLE_ENV: "dev-s.yml"
-  EXPECTED_RESOURCE_COUNT: "4"
+  EXPECTED_RESOURCE_COUNT: "5"
 
 fetch-tfstate:
   stage: fetch-main
@@ -137,12 +139,51 @@ compare-config:
   only:
     - 'triggers'
 
+install-hauler:
+  stage: install-hauler
+  needs: [compare-config]
+  script:
+    - echo "now installing different components on the vm's"
+    - |
+      ssh -o StrictHostKeyChecking=no root@192.168.236.32 <<EOSSH
+      ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
+        set -ex
+        cd /home/ansible/ansible/hauler-registry-fileserver-setup-main
+        echo "installing hauler"
+        ansible-playbook playbooks/site.yml
+      EOF
+  only:
+    - 'triggers'
+
+copy-certificate:
+  stage: copy-certificate
+  needs: [install-hauler]
+  script:
+    - echo "copying certificate"
+    - |
+      ssh -o StrictHostKeyChecking=no root@192.168.236.32 <<EOSSH
+      ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
+        set -e
+        CA_SRC="/home/ansible/ansible/hauler-registry-fileserver-setup-main/CA-certs/ca.crt"
+        DESTINATIONS=(
+          "/home/ansible/ansible/rke2-airgapped-deployment-hauler-main/cert/ca.crt"
+          "/home/ansible/ansible/haproxy-hauler-playbook-main/cert/ca.crt"
+          "/home/ansible/ansible/mariadb-hauler-community-main/cert/ca.crt"
+        )
+        for dest in "${DESTINATIONS[@]}"; do 
+          echo"copy cert to \$dest"
+          cp -f "\$CA_SRC" "\$dest"
+        done 
+      EOF
+  only:
+    - 'triggers'
+      
   
 
 
 install-rke2:
   stage: install-rke2
-  needs: [compare-config]
+  needs: [copy-certificate]
   script:
     - echo "now installing different components on the vm's"
     - |
@@ -160,7 +201,7 @@ install-rke2:
 
 install-haproxy:
   stage: install-haproxy
-  needs: [compare-config]
+  needs: [copy-certificate]
   script:
     - echo "now installing different components on the vm's"
     - |
@@ -178,7 +219,7 @@ install-haproxy:
 
 install-mariadb:
   stage: install-mariadb
-  needs: [compare-config]
+  needs: [copy-certificate]
   script:
     - echo "now installing different components on the vm's"
     - |
