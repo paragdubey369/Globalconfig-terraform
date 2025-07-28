@@ -5,8 +5,9 @@ stages:
   - generate-yml
   - commit-state
   - compare-config
-  # - ssh-script
-  - install-platform
+  - install-rke2
+  - install-haproxy
+  - install-mariadb
   - destroy-infra
 
 variables:
@@ -122,20 +123,9 @@ compare-config:
   only:
     - main
 
-# ssh_script:
-#   stage: ssh-script
-#   needs: [compare-config]
-#   script:
-#     - mkdir -p ~/ .ssh
-#     - chmod 700 ~/ .ssh
-#     - cd .ssh
-#     - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ./id_rsa
-#     - chmod 600 ~/ ./id_rsa
-#     - ssh-keyscan -H priv-172-19-0-30.local >> ~/ .ssh/known_hosts
-  
 
-install-platform:
-  stage: install-platform
+install-rke2:
+  stage: install-rke2
   needs: [compare-config]
   script:
     - echo "now installing different components on the vm's"
@@ -145,6 +135,38 @@ install-platform:
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
+        ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
+      EOF
+  only:
+    - main
+
+install-haproxy:
+  stage: install-haproxy
+  needs: [compare-config]
+  script:
+    - echo "now installing different components on the vm's"
+    - |
+      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
+        set -ex
+        cd /home/ansible/ansible/haproxy-hauler-playbook-main
+        echo "installing haproxy"
+        ansible-playbook -i inventories/dev-m.yml playbooks/haproxy.yml
+      EOF
+  only:
+    - main
+
+install-mariadb:
+  stage: install-mariadb
+  needs: [compare-config]
+  script:
+    - echo "now installing different components on the vm's"
+    - |
+      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
+        set -ex
+        cd /home/ansible/ansible/mariadb-hauler-community-main
+        echo "installing mariadb"
         ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
   only:
