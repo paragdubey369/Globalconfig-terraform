@@ -114,8 +114,7 @@ commit-state:
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
-  only:
-    - '$CI_COMMIT_TAG'
+ 
 
 compare-config:
   stage: compare-config
@@ -126,8 +125,7 @@ compare-config:
     when: always
     paths: 
       - comparison_logs/
-  only:
-    - '$CI_COMMIT_TAG'
+  
 
 
 install-rke2:
@@ -143,8 +141,7 @@ install-rke2:
         echo "installing rke2"
         ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
-  only:
-    - '$CI_COMMIT_TAG'
+ 
 
 install-haproxy:
   stage: install-haproxy
@@ -159,8 +156,7 @@ install-haproxy:
         echo "installing haproxy"
         ansible-playbook -i inventories/dev-m.yml playbooks/haproxy.yml
       EOF
-  only:
-    - '$CI_COMMIT_TAG'
+  
 
 install-mariadb:
   stage: install-mariadb
@@ -175,8 +171,7 @@ install-mariadb:
         echo "installing mariadb"
         ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
-  only:
-    - '$CI_COMMIT_TAG'
+ 
 
 destroy-infra:
   stage: destroy-infra
