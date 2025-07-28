@@ -52,22 +52,22 @@ haproxy_nodes = {
 }
 
 
-hauler_vm = {
-  hauler = {
-    name = "Hauler-1"
-    ip = "priv-172-17-0-20.local"
-    gateway = "priv-172-17-0-1.local"
-    dns_servers = ["1.1.1.1"]
-    vm_id = 150
-    memory = 16384
-    cores = 4
-    disk_size= "200G"
-    template = "hauler-template"
-    bridge = "vmbr1"
-    storage = "local-lvm"
-    node = "proxmox32"
-}
-}
+# hauler_vm = {
+#   hauler = {
+#     name = "Hauler-1"
+#     ip = "priv-172-17-0-20.local"
+#     gateway = "priv-172-17-0-1.local"
+#     dns_servers = ["1.1.1.1"]
+#     vm_id = 150
+#     memory = 16384
+#     cores = 4
+#     disk_size= "200G"
+#     template = "hauler-template"
+#     bridge = "vmbr1"
+#     storage = "local-lvm"
+#     node = "proxmox32"
+# }
+# }
 bastion_nodes = {
     node1 = {
     name = "bastion-1"

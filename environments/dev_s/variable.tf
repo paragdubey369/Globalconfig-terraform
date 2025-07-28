@@ -46,9 +46,9 @@ variable "haproxy_nodes" {
 
 }
 
-variable "hauler_vm" {
-  type = map(any)
+# variable "hauler_vm" {
+#   type = map(any)
 
-}
+# }
 
 
