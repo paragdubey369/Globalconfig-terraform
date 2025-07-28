@@ -145,7 +145,7 @@ install-platform:
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
-        ansible-playbook -i inventories/dev_m.yml playbooks/site.yml
+        ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
   only:
     - main
