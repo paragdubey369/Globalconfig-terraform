@@ -200,3 +200,5 @@ destroy-infra:
     - cd $ENV_DIR
     - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
   when: manual
+  only:
+    - 'triggers'
