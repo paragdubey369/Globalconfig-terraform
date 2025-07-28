@@ -1,4 +1,3 @@
-
 stages:
   - fetch-main
   - check-infra
@@ -27,8 +26,8 @@ fetch-tfstate:
     - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
     - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
     # - git checkout main -- $ENV_DIR/inventory.yml
-  rules:
-    - if: main
+  only:
+    - 'triggers'
 
 check-infra:
   stage: check-infra
@@ -51,6 +50,9 @@ check-infra:
       else
         echo "No terraform.tfstate found. Proceeding to create."
       fi
+  only:
+    - 'triggers'
+
 
   artifacts:
     paths:
@@ -109,7 +111,9 @@ commit-state:
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
- 
+  only:
+    - 'triggers'
+
 
 compare-config:
   stage: compare-config
