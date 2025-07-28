@@ -1,25 +1,28 @@
 import yaml
 import os
 import sys
+import argparse
 
-
-terraform_yml_path = 'environments/dev_m/inventory.yml'
+parser = argparse.ArgumentParser()
+parser.add_argument("--env", required=True)
+args = parser.parse_args()
+terraform_yml_path = f'environments/{args.env}/inventory.yml'
 ansible_root_dir = 'Ansible-Deployment'
 
 
 components = {
     'rke2': {
-        'file': 'dev_m.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['control', 'worker', 'bastion'],
         'name_keys': ['node_name']
     },
     'haproxy': {
-        'file': 'dev_m.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['haproxy'],
         'name_keys': ['primary_ha']
     },
     'mariadb': {
-        'file': 'dev_m.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['mariadb', 'galera'],
         'name_keys': ['wsrep_node_name']
     }
@@ -91,7 +94,7 @@ def compare_hosts(component, tf_hosts, ans_hosts, prefixes):
     all_ok = True
     for host, ip in tf_filtered.items():
         if host not in ans_hosts:
-            print(f"\033[1;31m Host '{host}' missing in {component}/dev_m.yml\033[0m")
+            print(f"\033[1;31m Host '{host}' missing in {component}/f'{args.env}.yml'\033[0m")
             all_ok = False
         elif ans_hosts[host] != ip:
             print(f"\033[1;31m IP mismatch for '{host}': TF={ip}, YAML={ans_hosts[host]}\033[0m")
