@@ -5,7 +5,7 @@ stages:
   - generate-yml
   - commit-state
   - compare-config
-  - ssh-script
+  # - ssh-script
   - install-platform
   - destroy-infra
 
@@ -122,18 +122,17 @@ compare-config:
   only:
     - main
 
-ssh_script:
-  stage: ssh-script
-  needs: [compare-config]
-  script:
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - |
-      cat <<EOF > ~/.ssh/id_rsa
-      $ANSIBLE_SSH_PRIVATE_KEY
-      EOF
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H priv-172-19-0-30.local >> ~/.ssh/known_hosts
+# ssh_script:
+#   stage: ssh-script
+#   needs: [compare-config]
+#   script:
+#     - mkdir -p ~/ .ssh
+#     - chmod 700 ~/ .ssh
+#     - cd .ssh
+#     - cp "$ANSIBLE_SSH_PRIVATE_KEY" > ./id_rsa
+#     - chmod 600 ~/ ./id_rsa
+#     - ssh-keyscan -H priv-172-19-0-30.local >> ~/ .ssh/known_hosts
+  
 
 install-platform:
   stage: install-platform
@@ -141,7 +140,8 @@ install-platform:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
+      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-17-0-30.local <<'EOF'
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
         echo "installing rke2"
