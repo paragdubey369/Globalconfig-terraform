@@ -5,12 +5,12 @@ output "control_nodes" {
   }
 }
 
-output "worker_nodes" {
-  value = {
-    for node in var.worker_nodes :
-    node.name => node.ip
-  }
-}
+# output "worker_nodes" {
+#   value = {
+#     for node in var.worker_nodes :
+#     node.name => node.ip
+#   }
+# }
 
 output "bastion_nodes" {
   value = {
