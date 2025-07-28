@@ -14,10 +14,10 @@ variables:
   ENV_DIR: "environments/dev_m"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
-  TF_env: "dev_m.tfvars"
-  COMPARE_ENV: dev_m
-  ANSIBLE_ENV: "dev-m.yml"
-  EXPECTED_RESOURCE_COUNT: "5"
+  TF_env: "dev_s.tfvars"
+  COMPARE_ENV: dev_s
+  ANSIBLE_ENV: "dev-s.yml"
+  EXPECTED_RESOURCE_COUNT: "4"
 
 fetch-tfstate:
   stage: fetch-main
