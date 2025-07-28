@@ -15,6 +15,7 @@ variables:
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
   env: "dev_m.tfvars"
+  EXPECTED_RESOURCE_COUNT: "5"
 
 fetch-tfstate:
   stage: fetch-main
@@ -39,8 +40,8 @@ check-infra:
     - |
       if [ -f "terraform.tfstate" ]; then
         RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
-        echo "Resource count: $RESOURCE_COUNT"
-        if [ "$RESOURCE_COUNT" -gt 0 ]; then
+        echo "Resource count: $RESOURCE_COUNT (expected:$EXPECTED_RESOURCE_COUNT)"
+        if [ "$RESOURCE_COUNT" -ge "$EXPECTED_RESOURCE_COUNT" ]; then
           echo "Infrastructure exists. Skipping apply."
           touch infra_exists.flag
           terraform output -json > output.json
