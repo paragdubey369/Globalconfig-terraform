@@ -1,0 +1,22 @@
+# # TEST: HA Test Environment
+# # 2haproxy nodes 
+all:
+  vars:
+    environment_type: "TEST"
+  children:
+    haproxy_nodes:
+      children:
+        primary_group:
+          hosts:
+            haproxy-primary:
+              ansible_host: 172.17.0.18
+              primary_ha: haproxy1
+              ansible_user: rhel
+              ansible_password: "{{ vault_sysuser_password }}"
+        secondary_group:
+          hosts:
+            haproxy-secondary:
+              ansible_host: 172.17.0.19
+              secondary_ha: haproxy2
+              ansible_user: rhel
+              ansible_password: "{{ vault_sysuser_password }}"

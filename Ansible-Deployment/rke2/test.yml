@@ -12,13 +12,13 @@ all:
       hosts:
         control-node-1:
           ansible_host: 172.17.0.100
-          node_name: controlnode-1
+          node_name: control-1
         control-node-2:
-          ansible_host: 172.20.0.101
-          node_name: controlnode-2
+          ansible_host: 172.17.0.11
+          node_name: control-2
         control-node-3:
-          ansible_host: 172.20.0.102
-          node_name: controlnode-3
+          ansible_host: 172.17.0.12
+          node_name: control-3
     worker_nodes:
       hosts:
 #        worker-node-1:
@@ -27,5 +27,5 @@ all:
     bastion:
       hosts:
         bastion-host:
-          ansible_host: 172.20.0.110
-          node_name: bastion
+          ansible_host: 172.17.0.13
+          node_name: bastion-1

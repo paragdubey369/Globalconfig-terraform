@@ -3,7 +3,7 @@
 all:
   vars:
     #DO NOT MODIFY ansible_user. This user will be used to SSH to inventory nodes. 
-    ansible_user: root
+    ansible_user: rhel
     #DO NOT MODIFY ansible_password. This is the password for the SSH user. The password will be maintained as part of vault. 
     ansible_password: "{{ vault_sysuser_password }}"
     environment_type: "UAT"
@@ -11,27 +11,27 @@ all:
     control_nodes:
       hosts:
         control-node-1:
-          ansible_host: 172.20.0.100
-          node_name: controlnode-1
+          ansible_host: 172.17.0.21
+          node_name: control-1
         control-node-2:
-          ansible_host: 172.20.0.101
-          node_name: controlnode-2
+          ansible_host: 172.17.0.22
+          node_name: control-2
         control-node-3:
-          ansible_host: 172.20.0.102
-          node_name: controlnode-3
+          ansible_host: 172.17.0.23
+          node_name: control-3
     worker_nodes:
       hosts:
         worker-node-1:
-          ansible_host: 172.20.0.103
-          node_name: workernode-1
+          ansible_host: 172.17.0.24
+          node_name: worker-1
         worker-node-2:
-          ansible_host: 172.20.0.104
-          node_name: workernode-2
+          ansible_host: 172.17.0.25
+          node_name: worker-2
         worker-node-3:
-          ansible_host: 172.20.0.105
-          node_name: workernode-3
+          ansible_host: 172.17.0.26
+          node_name: worker-3
     bastion:
       hosts:
         bastion-host:
-          ansible_host: 172.20.0.110
-          node_name: bastion
+          ansible_host: 172.17.0.27
+          node_name: bastion-1

@@ -1,0 +1,15 @@
+# # DEV-S: Small Development Environment
+# # Single node acting as haproxy
+all:
+  vars:
+    environment_type: "DEV-S"
+  children:
+    haproxy_nodes:
+      children:
+        primary_group:
+          hosts:
+            haproxy_primary:
+              ansible_host: 172.17.0.106
+              primary_ha: haproxy1
+              ansible_user: rhel
+              ansible_password: "{{ vault_sysuser_password }}"

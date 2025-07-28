@@ -1,0 +1,14 @@
+# DEV-S: Small Development Environment
+# Single Mariadb node
+all:
+  vars:
+    environment_type: "DEV-S"
+    auto20_remote_user: rhel
+  children:
+    galera_cluster_nocc:
+      hosts:
+        nocc-node1:
+          ansible_host: 172.17.0.104
+          wsrep_node_name: mariadb01
+          server_id: 1
+          gtid_domain_id: 104
