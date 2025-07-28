@@ -11,7 +11,7 @@ stages:
   - destroy-infra
 
 variables:
-  ENV_DIR: "environments/dev_m"
+  ENV_DIR: "environments/dev_s"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
   TF_env: "dev_s.tfvars"
