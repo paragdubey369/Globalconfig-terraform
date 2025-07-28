@@ -53,8 +53,8 @@ module "haproxy_nodes" {
   vm_config = each.value
 }
 
-# module "hauler_vm" {
-#   source = "./modules/vm"
-#   for_each = var.hauler_vm
-#   vm_config = each.value
-# }
+module "hauler_vm" {
+  source = "./modules/vm"
+  for_each = var.hauler_vm
+  vm_config = each.value
+}
