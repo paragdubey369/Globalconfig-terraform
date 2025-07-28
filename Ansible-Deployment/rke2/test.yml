@@ -1,0 +1,31 @@
+# TEST: HA Test Environment
+# Multiple nodes acting as both master and workers
+all:
+  vars:
+    #DO NOT MODIFY ansible_user. This user will be used to SSH to inventory nodes. 
+    ansible_user: rhel
+    #DO NOT MODIFY ansible_password. This is the password for the SSH user. The password will be maintained as part of vault. 
+    ansible_password: "{{ vault_sysuser_password }}"
+    environment_type: "TEST"
+  children:
+    control_nodes:
+      hosts:
+        control-node-1:
+          ansible_host: 172.17.0.100
+          node_name: controlnode-1
+        control-node-2:
+          ansible_host: 172.20.0.101
+          node_name: controlnode-2
+        control-node-3:
+          ansible_host: 172.20.0.102
+          node_name: controlnode-3
+    worker_nodes:
+      hosts:
+#        worker-node-1:
+#          ansible_host: 172.20.0.103
+#          node_name: workernode-1
+    bastion:
+      hosts:
+        bastion-host:
+          ansible_host: 172.20.0.110
+          node_name: bastion
