@@ -171,7 +171,6 @@ copy-certificate:
           "/home/ansible/ansible/mariadb-hauler-community-main/cert/ca.crt"
         )
         for dest in "${DESTINATIONS[@]}"; do 
-          echo"copy cert to \$dest"
           cp -f "\$CA_SRC" "\$dest"
         done 
       EOF
