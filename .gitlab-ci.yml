@@ -78,6 +78,9 @@ create-infra:
       - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/output.json
     expire_in: 2 hours
+  only:
+    - 'triggers'
+  
 
 
 generate-yml:
@@ -88,6 +91,10 @@ generate-yml:
   artifacts:
     paths:
       - $ENV_DIR/inventory.yml
+  only:
+    - 'triggers'
+
+
 
 
 commit-state:
@@ -124,6 +131,9 @@ compare-config:
     when: always
     paths: 
       - comparison_logs/
+  only:
+    - 'triggers'
+
   
 
 
@@ -140,6 +150,9 @@ install-rke2:
         echo "installing rke2"
         ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
+  only:
+    - 'triggers'
+
  
 
 install-haproxy:
@@ -155,6 +168,9 @@ install-haproxy:
         echo "installing haproxy"
         ansible-playbook -i inventories/dev-m.yml playbooks/haproxy.yml
       EOF
+  only:
+    - 'triggers'
+
   
 
 install-mariadb:
@@ -170,6 +186,9 @@ install-mariadb:
         echo "installing mariadb"
         ansible-playbook -i inventories/dev-m.yml playbooks/site.yml
       EOF
+  only:
+    - 'triggers'
+
  
 
 destroy-infra:
