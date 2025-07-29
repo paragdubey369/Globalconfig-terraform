@@ -13,17 +13,17 @@ ansible_root_dir = 'Ansible-Deployment'
 
 components = {
     'rke2': {
-        'file': f'rke2/{args.env}.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['control', 'worker', 'bastion'],
         'name_keys': ['node_name']
     },
     'haproxy': {
-        'file': f'haproxy/{args.env}.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['haproxy'],
         'name_keys': ['primary_ha']
     },
     'mariadb': {
-        'file': f'mariadb/{args.env}.yml',
+        'file': f'{args.env}.yml',
         'prefixes': ['mariadb', 'galera'],
         'name_keys': ['wsrep_node_name']
     }
