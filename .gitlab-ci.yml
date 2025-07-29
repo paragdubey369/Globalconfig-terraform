@@ -160,7 +160,7 @@ install-hauler:
           echo "hauler already installed"
         fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -178,7 +178,7 @@ copy-certificate:
         cp -f ca.crt /home/ansible/ansible/haproxy-hauler-playbook-main/cert
         cp -f ca.crt /home/ansible/ansible/mariadb-hauler-community-main/cert
       EOF
-  when: manual
+  
   only:
     - 'triggers'
         
@@ -197,10 +197,16 @@ install-rke2:
       ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
-        echo "installing rke2"
-        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
+        if [[ ! -f "/home/ansible/ansible/rke2-airgapped-deployment-hauler-main/flags/rke2_installed.flag" ]]; then
+          echo "installing rke2"
+          ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
+          mkdir -p /home/ansible/ansible/rke2-airgapped-deployment-hauler-main/flags/
+          touch /home/ansible/ansible/rke2-airgapped-deployment-hauler-main/flags/rke2_installed.flag
+        else
+          echo "rke2 already installed"
+        fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -216,10 +222,16 @@ install-haproxy:
       ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
         set -ex
         cd /home/ansible/ansible/haproxy-hauler-playbook-main
-        echo "installing haproxy"
-        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/haproxy.yml
+        if [[ ! -f "/home/ansible/ansible/haproxy-hauler-playbook-main/flags/haproxy_installed.flag" ]]; then
+          echo "installing haproxy"
+          ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/haproxy.yml
+          mkdir -p /home/ansible/ansible/haproxy-hauler-playbook-main/flags/
+          touch /home/ansible/ansible/haproxy-hauler-playbook-main/flags/haproxy_installed.flag
+        else
+          echo "haproxy already installed"
+        fi      
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -235,10 +247,16 @@ install-mariadb:
       ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
         set -ex
         cd /home/ansible/ansible/mariadb-hauler-community-main
-        echo "installing mariadb"
-        ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
+        if [[ ! -f "/home/ansible/ansible/mariadb-hauler-community-main/flags/mariadb_installed.flag" ]]; then
+          echo "installing mariadb"
+          ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
+          mkdir -p /home/ansible/ansible/mariadb-hauler-community-main/flags/
+          touch /home/ansible/ansible/mariadb-hauler-community-main/flags/mariadb_installed.flag
+        else
+          echo "mariadb already installed"
+        fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -249,6 +267,14 @@ destroy-infra:
   script:
     - cd $ENV_DIR
     - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
+    - |
+      ssh -o StrictHostKeyChecking=no root@192.168.236.32 <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<'EOF'
+        rm -f /home/ansible/ansible/hauler-registry-fileserver-setup-main/flags/hauler_installed.flag
+        rm -f /home/ansible/ansible/rke2-airgapped-deployment-hauler-main/flags/rke2_installed.flag
+        rm -f /home/ansible/ansible/haproxy-hauler-playbook-main/flags/haproxy_installed.flag
+        rm -f /home/ansible/ansible/mariadb-hauler-community-main/flags/mariadb_installed.flag
+      EOF
   when: manual
   only:
     - 'triggers'
