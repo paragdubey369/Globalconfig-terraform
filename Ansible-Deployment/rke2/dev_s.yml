@@ -10,7 +10,7 @@ all:
   children:
     control_nodes:
       hosts:
-        single-node:
+        control-node-1:
           ansible_host: priv-172-17-0-100.local
           node_name: control-1
     # Empty groups to maintain playbook compatibility
