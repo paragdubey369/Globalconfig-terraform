@@ -162,7 +162,7 @@ copy-certificate:
     - echo "copying certificate"
     - |
       ssh -o StrictHostKeyChecking=no root@192.168.236.32 <<'EOSSH'
-      ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
+      ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<'EOF'
         set -e
         CA_SRC="/home/ansible/ansible/hauler-registry-fileserver-setup-main/CA-Certs/ca.crt"
         DESTINATIONS=(
