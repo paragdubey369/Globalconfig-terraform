@@ -111,7 +111,7 @@ commit-state:
       artifacts: true  
   script:
     - echo "Committing updated tfstate to state branch..."
-    - cd $ENV_DIR
+  
     - git config user.email "paragdubey007@gmail.com"
     - git config user.name "dubeyp"
     - git remote set-url origin "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git"
@@ -120,6 +120,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
+    - cd $ENV_DIR
     - git add . 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
