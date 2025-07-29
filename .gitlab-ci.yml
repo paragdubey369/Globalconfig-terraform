@@ -166,12 +166,12 @@ copy-certificate:
         set -ex
         CA_SRC="/home/ansible/ansible/hauler-registry-fileserver-setup-main/CA-Certs/ca.crt"
         DESTINATIONS=(
-          "/home/ansible/ansible/rke2-airgapped-deployment-hauler-main/cert/ca.crt"
-          "/home/ansible/ansible/haproxy-hauler-playbook-main/cert/ca.crt"
-          "/home/ansible/ansible/mariadb-hauler-community-main/cert/ca.crt"
+          "/home/ansible/ansible/rke2-airgapped-deployment-hauler-main/cert"
+          "/home/ansible/ansible/haproxy-hauler-playbook-main/cert"
+          "/home/ansible/ansible/mariadb-hauler-community-main/cert"
         )
         for dest in "${DESTINATIONS[@]}"; do 
-          cp -f "$CA_SRC" "$dest"
+          cp -f "$CA_SRC" "$dest/"
         done 
       EOF
       
