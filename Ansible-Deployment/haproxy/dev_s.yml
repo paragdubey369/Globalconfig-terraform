@@ -10,6 +10,6 @@ all:
           hosts:
             haproxy_primary:
               ansible_host: 172.17.0.106
-              primary_ha: haproxy_primary
+              primary_ha: haproxy-primary
               ansible_user: rhel
               ansible_password: "{{ vault_sysuser_password }}"
