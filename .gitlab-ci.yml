@@ -133,7 +133,7 @@ compare-config:
   stage: compare-config
   needs: [commit-state]
   script:
-    - python3 compareini_yml.py --env $COMPARE_ENV
+    - python3 compareini_yml.py --env dev_s
   artifacts:
     when: always
     paths: 
