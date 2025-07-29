@@ -157,7 +157,7 @@ install-hauler:
 
 copy-certificate:
   stage: copy-certificate
-  needs: [install-hauler]
+  # needs: [install-hauler]
   script:
     - echo "copying certificate"
     - |
