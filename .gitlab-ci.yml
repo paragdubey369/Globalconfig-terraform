@@ -151,8 +151,14 @@ install-hauler:
       ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<EOF
         set -ex
         cd /home/ansible/ansible/hauler-registry-fileserver-setup-main
-        echo "installing hauler"
-        ansible-playbook playbooks/site.yml
+        if [! -f /home/ansible/ansible/hauler-registry-fileserver-setup-main/flags/hauler_installed.flag ]; then
+          echo "installing hauler"
+          ansible-playbook playbooks/site.yml
+          mkdir -p /home/ansible/ansible/hauler-registry-fileserver-setup-main/flags/
+          touch /home/ansible/ansible/hauler-registry-fileserver-setup-main/flags/hauler_installed.flag
+        else
+          echo "hauler already installed"
+        fi
       EOF
   when: manual
   only:
