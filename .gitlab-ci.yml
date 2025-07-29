@@ -119,7 +119,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
-    - git add $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup $ENV_DIR/inventory.yml 
+    - git add terraform.tfstate terraform.tfstate.backup inventory.yml 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
@@ -152,6 +152,7 @@ install-hauler:
         echo "installing hauler"
         ansible-playbook playbooks/site.yml
       EOF
+  when: manual
   only:
     - 'triggers'
 
@@ -169,6 +170,7 @@ copy-certificate:
         cp -f ca.crt /home/ansible/ansible/haproxy-hauler-playbook-main/cert
         cp -f ca.crt /home/ansible/ansible/mariadb-hauler-community-main/cert
       EOF
+  when: manual
   only:
     - 'triggers'
         
@@ -190,6 +192,7 @@ install-rke2:
         echo "installing rke2"
         ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
       EOF
+  when: manual
   only:
     - 'triggers'
 
@@ -208,6 +211,7 @@ install-haproxy:
         echo "installing haproxy"
         ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/haproxy.yml
       EOF
+  when: manual
   only:
     - 'triggers'
 
@@ -226,6 +230,7 @@ install-mariadb:
         echo "installing mariadb"
         ansible-playbook -i inventories/$ANSIBLE_ENV playbooks/site.yml
       EOF
+  when: manual
   only:
     - 'triggers'
 
