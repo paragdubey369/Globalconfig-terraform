@@ -109,7 +109,7 @@ bastion_nodes = {
 
 galera_cluster_nocc = {
   nocc_node1 = {
-    name        = "mariabd01"
+    name        = "mariadb01"
     ip          = "priv-172-17-0-28.local"
     server_id   = 1
     gtid_domain_id = 104
@@ -125,7 +125,7 @@ galera_cluster_nocc = {
     node        = "proxmox32"
   }
   nocc_node2  = {
-    name        = "mariabd02"
+    name        = "mariadb02"
     ip          = "priv-172-17-0-29.local"
     gateway     = "priv-172-17-0-1.local"
     server_id   = 1
