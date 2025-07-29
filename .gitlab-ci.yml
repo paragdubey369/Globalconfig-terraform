@@ -161,8 +161,8 @@ copy-certificate:
   script:
     - echo "copying certificate"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<EOSSH
-      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<EOF
+      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
         set -e
         CA_SRC="/home/ansible/ansible/hauler-registry-fileserver-setup-main/CA-Certs/ca.crt"
         DESTINATIONS=(
@@ -173,7 +173,8 @@ copy-certificate:
         for dest in "${DESTINATIONS[@]}"; do 
           cp -f "$CA_SRC" "$dest/"
         done 
-      EOF
+        EOF
+       EOSSH
   # only:
   #   - 'triggers'
       
