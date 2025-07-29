@@ -10,19 +10,20 @@ terraform_yml_path = f'environments/{args.env}/inventory.yml'
 ansible_root_dir = 'Ansible-Deployment'
 
 
+
 components = {
     'rke2': {
-        'file': f'{args.env}.yml',
+        'file': f'rke2/{args.env}.yml',
         'prefixes': ['control', 'worker', 'bastion'],
         'name_keys': ['node_name']
     },
     'haproxy': {
-        'file': f'{args.env}.yml',
+        'file': f'haproxy/{args.env}.yml',
         'prefixes': ['haproxy'],
         'name_keys': ['primary_ha']
     },
     'mariadb': {
-        'file': f'{args.env}.yml',
+        'file': f'mariadb/{args.env}.yml',
         'prefixes': ['mariadb', 'galera'],
         'name_keys': ['wsrep_node_name']
     }
