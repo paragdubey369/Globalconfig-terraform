@@ -16,7 +16,7 @@ control_nodes = {
 }
 galera_cluster_nocc = {
   nocc_node1 = {
-    name        = "mariabd01"
+    name        = "mariadb01"
     ip          = "172.17.0.104"
     server_id   = 1
     gtid_domain_id = 104
