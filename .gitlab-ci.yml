@@ -127,7 +127,7 @@ commit-state:
     # - ls -la $ENV_DIR
     - git add -A 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
-     - git pull --rebase origin main
+    - git pull --rebase origin main
     - git push origin main
   only:
     - 'triggers'
