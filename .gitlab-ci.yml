@@ -128,7 +128,7 @@ commit-state:
     - git add -A 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --rebase origin main
-    - git push origin main
+    - git push origin main --force
   only:
     - 'triggers'
 
