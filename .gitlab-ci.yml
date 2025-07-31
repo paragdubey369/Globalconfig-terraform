@@ -122,7 +122,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
-    # - git add -f "$ENV_DIR/inventory.yml" "$ENV_DIR/terraform.tfstate.backup" "$ENV_DIR/terraform.tfstate"
+    - git add .
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main
