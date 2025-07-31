@@ -117,6 +117,7 @@ commit-state:
     - git remote set-url origin "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git"
     - git fetch origin main 
     - git checkout -f main || git checkout -b main
+    - git pull --rebase origin main
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
