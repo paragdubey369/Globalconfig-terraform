@@ -125,7 +125,7 @@ commit-state:
     # - cp $ENV_DIR/inventory.yml .
     - cd $ENV_DIR
     # - ls -la $ENV_DIR
-    - git add -A $ENV_DIR
+    - git add -A 
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     
     - git push origin main
