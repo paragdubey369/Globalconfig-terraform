@@ -118,7 +118,7 @@ commit-state:
     - git fetch origin main 
     - git checkout -f main || git checkout -b main
     - git pull --no-rebase origin main
-    - export ENV_DIR="environments/test"
+    # - export ENV_DIR="environments/test"
     - cp $ENV_DIR/terraform.tfstate .
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
