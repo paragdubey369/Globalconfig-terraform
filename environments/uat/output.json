@@ -1,0 +1,88 @@
+{
+  "bastion_nodes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "bastion-1": "string"
+      }
+    ],
+    "value": {
+      "bastion-1": "172.17.0.27"
+    }
+  },
+  "control_nodes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "control-1": "string",
+        "control-2": "string",
+        "control-3": "string"
+      }
+    ],
+    "value": {
+      "control-1": "172.17.0.21",
+      "control-2": "172.17.0.22",
+      "control-3": "172.17.0.23"
+    }
+  },
+  "galera_cluster_nocc": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "mariadb01": "string",
+        "mariadb02": "string",
+        "mariadb03": "string"
+      }
+    ],
+    "value": {
+      "mariadb01": "172.17.0.28",
+      "mariadb02": "172.17.0.29",
+      "mariadb03": "172.17.0.30"
+    }
+  },
+  "haproxy_nodes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "haproxy-primary": "string",
+        "haproxy-secondary": "string"
+      }
+    ],
+    "value": {
+      "haproxy-primary": "172.17.0.32",
+      "haproxy-secondary": "172.17.0.33"
+    }
+  },
+  "maxscale_servers": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "maxscale01": "string"
+      }
+    ],
+    "value": {
+      "maxscale01": "172.17.0.31"
+    }
+  },
+  "worker_nodes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "worker-1": "string",
+        "worker-2": "string",
+        "worker-3": "string"
+      }
+    ],
+    "value": {
+      "worker-1": "172.17.0.24",
+      "worker-2": "172.17.0.25",
+      "worker-3": "172.17.0.26"
+    }
+  }
+}
