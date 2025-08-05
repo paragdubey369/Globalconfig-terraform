@@ -10,13 +10,13 @@ all:
           hosts:
             haproxy-primary:
               ansible_host: priv-172-17-0-18.local
-              primary_ha: haproxy1
+              primary_ha: haproxy-primary
               ansible_user: rhel
               ansible_password: "{{ vault_sysuser_password }}"
         secondary_group:
           hosts:
             haproxy-secondary:
               ansible_host: priv-172-17-0-19.local
-              secondary_ha: haproxy2
+              secondary_ha: haproxy-secondary
               ansible_user: rhel
               ansible_password: "{{ vault_sysuser_password }}"
