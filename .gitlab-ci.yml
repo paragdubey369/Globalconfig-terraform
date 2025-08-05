@@ -96,6 +96,8 @@ generate-yml:
   artifacts:
     paths:
       - $ENV_DIR/inventory.yml
+      - $ENV_DIR/terraform.tfstate
+      - $ENV_DIR/terraform.tfstate.backup
   only:
     - 'triggers'
 
