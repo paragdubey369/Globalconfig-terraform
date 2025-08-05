@@ -40,3 +40,9 @@ output "maxscale_servers" {
     node.name => node.ip
   }
 }
+output "hauler_vm" {
+   value = {
+     for node in var.hauler_vm :
+    node.name => node.ip
+  }
+}
