@@ -13,13 +13,13 @@ stages:
   - destroy-infra
 
 variables:
-  ENV_DIR: "environments/test"
+  ENV_DIR: "environments/uat"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
-  TF_env: "test.tfvars"
-  COMPARE_ENV: test
-  ANSIBLE_ENV: "test.yml"
-  EXPECTED_RESOURCE_COUNT: "11"
+  TF_env: "uat.tfvars"
+  COMPARE_ENV: uat
+  ANSIBLE_ENV: "uat.yml"
+  EXPECTED_RESOURCE_COUNT: "13"
 
 fetch-tfstate:
   stage: fetch-main
@@ -134,7 +134,7 @@ compare-config:
   stage: compare-config
   needs: [commit-state]
   script:
-    - python3 compareini_yml.py --env test
+    - python3 compareini_yml.py --env uat
   artifacts:
     when: always
     paths: 
