@@ -1,0 +1,32 @@
+bastion_nodes:
+  bastion-1:
+    ansible_host: 172.17.0.27
+control_nodes:
+  control-1:
+    ansible_host: 172.17.0.21
+  control-2:
+    ansible_host: 172.17.0.22
+  control-3:
+    ansible_host: 172.17.0.23
+galera_cluster_nocc:
+  mariadb01:
+    ansible_host: 172.17.0.28
+  mariadb02:
+    ansible_host: 172.17.0.29
+  mariadb03:
+    ansible_host: 172.17.0.30
+haproxy_nodes:
+  haproxy-primary:
+    ansible_host: 172.17.0.32
+  haproxy-secondary:
+    ansible_host: 172.17.0.33
+maxscale_servers:
+  maxscale01:
+    ansible_host: 172.17.0.31
+worker_nodes:
+  worker-1:
+    ansible_host: 172.17.0.24
+  worker-2:
+    ansible_host: 172.17.0.25
+  worker-3:
+    ansible_host: 172.17.0.26
