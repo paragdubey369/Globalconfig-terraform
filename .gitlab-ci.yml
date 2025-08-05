@@ -19,7 +19,7 @@ variables:
   TF_env: "uat.tfvars"
   COMPARE_ENV: uat
   ANSIBLE_ENV: "uat.yml"
-  EXPECTED_RESOURCE_COUNT: "13"
+  EXPECTED_RESOURCE_COUNT: "14"
 
 fetch-tfstate:
   stage: fetch-main
