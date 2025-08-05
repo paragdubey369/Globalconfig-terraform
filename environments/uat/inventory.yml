@@ -1,0 +1,35 @@
+bastion_nodes:
+  bastion-1:
+    ansible_host: priv-172-17-0-27.local
+control_nodes:
+  control-1:
+    ansible_host: priv-172-17-0-21.local
+  control-2:
+    ansible_host: priv-172-17-0-22.local
+  control-3:
+    ansible_host: priv-172-17-0-23.local
+galera_cluster_nocc:
+  mariadb01:
+    ansible_host: priv-172-17-0-28.local
+  mariadb02:
+    ansible_host: priv-172-17-0-29.local
+  mariadb03:
+    ansible_host: priv-172-17-0-30.local
+haproxy_nodes:
+  haproxy-primary:
+    ansible_host: priv-172-17-0-32.local
+  haproxy-secondary:
+    ansible_host: priv-172-17-0-33.local
+hauler_vm:
+  Hauler-1:
+    ansible_host: priv-172-17-0-20.local
+maxscale_servers:
+  maxscale01:
+    ansible_host: priv-172-17-0-31.local
+worker_nodes:
+  worker-1:
+    ansible_host: priv-172-17-0-24.local
+  worker-2:
+    ansible_host: priv-172-17-0-25.local
+  worker-3:
+    ansible_host: priv-172-17-0-26.local
