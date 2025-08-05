@@ -28,8 +28,8 @@ fetch-tfstate:
   script:
     - echo "Fetching .tfstate from main branch..."
     - git fetch origin main || echo "No state branch yet"
-    - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
-    - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
+    - git checkout main --$ENV_DIR/terraform.tfstate || echo "No previous tfstate"
+    - git checkout main --$ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
     # - git checkout main -- $ENV_DIR/inventory.yml
   only:
     - 'triggers'
@@ -38,7 +38,7 @@ check-infra:
   stage: check-infra
   script:
     - echo "Checking for infrastructure state..."
-    - git checkout main -- $ENV_DIR/terraform.tfstate 
+    - git checkout main --$ENV_DIR/terraform.tfstate 
     - cd $ENV_DIR
     - terraform refresh -var-file=$TF_env -input=$TF_INPUT || echo "Refresh failed"
     - |
