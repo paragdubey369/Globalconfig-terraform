@@ -20,7 +20,7 @@ components = {
     'haproxy': {
         'file': f'{args.env}.yml',
         'prefixes': ['haproxy'],
-        'name_keys': ['primary_ha', 'secondary_ha']
+        'name_keys': ['primary_ha','secondary_ha']
     },
     'mariadb': {
         'file': f'{args.env}.yml',
