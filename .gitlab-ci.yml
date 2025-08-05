@@ -13,13 +13,13 @@ stages:
   - destroy-infra
 
 variables:
-  ENV_DIR: "environments/dev_s"
+  ENV_DIR: "environments/uat"
   TF_APPROVE: "auto-approve"
   TF_INPUT: "false"
-  TF_env: "dev_s.tfvars"
-  COMPARE_ENV: dev_s
-  ANSIBLE_ENV: "dev_s.yml"
-  EXPECTED_RESOURCE_COUNT: "5"
+  TF_env: "uat.tfvars"
+  COMPARE_ENV: uat
+  ANSIBLE_ENV: "uat.yml"
+  EXPECTED_RESOURCE_COUNT: "13"
 
 fetch-tfstate:
   stage: fetch-main
@@ -124,7 +124,7 @@ commit-state:
     - cp $ENV_DIR/terraform.tfstate.backup .
     - cp $ENV_DIR/inventory.yml .
     - cd $ENV_DIR
-    - git add -f inventory.yml terraform.tfstate terraform.tfstate.backup inventory.yml
+    - git add .
     - git commit -m "Update tfstate for dev_m [ci skip]" || echo "No changes to commit"
     - git pull --no-rebase origin main
     - git push origin main 
@@ -135,7 +135,7 @@ compare-config:
   stage: compare-config
   needs: [commit-state]
   script:
-    - python3 compareini_yml.py --env dev_s
+    - python3 compareini_yml.py --env uat
   artifacts:
     when: always
     paths: 
@@ -162,7 +162,7 @@ install-hauler:
           echo "hauler already installed"
         fi
       EOF
-  
+  when: manual
   only:
     - 'triggers'
 
@@ -180,7 +180,7 @@ copy-certificate:
         cp -f ca.crt /home/ansible/ansible/haproxy-hauler-playbook-main/cert
         cp -f ca.crt /home/ansible/ansible/mariadb-hauler-community-main/cert
       EOF
-  
+  when: manual
   only:
     - 'triggers'
         
@@ -208,7 +208,7 @@ install-rke2:
           echo "rke2 already installed"
         fi
       EOF
-  
+  when: manual
   only:
     - 'triggers'
 
@@ -233,7 +233,7 @@ install-haproxy:
           echo "haproxy already installed"
         fi      
       EOF
-  
+  when: manual
   only:
     - 'triggers'
 
@@ -258,7 +258,7 @@ install-mariadb:
           echo "mariadb already installed"
         fi
       EOF
-  
+  when: manual
   only:
     - 'triggers'
 
