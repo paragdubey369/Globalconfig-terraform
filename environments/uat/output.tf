@@ -34,4 +34,9 @@ output "haproxy_nodes" {
     node.name => node.ip
   }
 }
-
+output "maxscale_servers" {
+   value = {
+     for node in var.maxscale_servers :
+    node.name => node.ip
+  }
+}
