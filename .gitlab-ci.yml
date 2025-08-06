@@ -119,18 +119,18 @@ commit-state:
     - git fetch origin main 
     - git checkout -f main || git checkout -b main
     - git pull --no-rebase origin main
-    # - cp $ENV_DIR/terraform.tfstate .
-    # - cp $ENV_DIR/terraform.tfstate.backup .
-    # - cp $ENV_DIR/inventory.yml .
-    # - mkdir -p $ENV_DIR
+    - cp "$ENV_DIR"/terraform.tfstate .
+    - cp "$ENV_DIR"/terraform.tfstate.backup .
+    - cp "$ENV_DIR"/inventory.yml .
+    - mkdir -p "$ENV_DIR"
     # - ls -la
-    - git add $ENV_DIR/inventory.yml $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup
-    - if git status --porcelain | grep -q "$ENV_DIR" ; then
-    -   echo "changes detected"
-    -   git commit -m "update"
-    -   git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip
+    - git add inventory.yml terraform.tfstate terraform.tfstate.backup
+    - if git diff --cached --quiet; then
+    -   echo "changes detected";
+    -   git commit -m "update";
+    -   git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip;
     - else
-    -   echo "no changes"
+    -   echo "no changes";
     - fi
       
   only:
