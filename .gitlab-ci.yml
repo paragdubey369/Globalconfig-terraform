@@ -125,10 +125,13 @@ commit-state:
     # - mkdir -p $ENV_DIR
     # - ls -la
     - git add $ENV_DIR/inventory.yml $ENV_DIR/terraform.tfstate $ENV_DIR/terraform.tfstate.backup
-    # - git status
-    - git commit -m "update"
-    - git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip
-   
+    - if git status --porcelain | grep -q "$ENV_DIR" ; then
+    -   echo "changes detected"
+    -   git commit -m "update"
+    -   git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip
+    - else
+    -   echo "no changes"
+    - fi
       
   only:
     - 'triggers'
