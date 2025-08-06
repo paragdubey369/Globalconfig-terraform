@@ -1,0 +1,12 @@
+bastion_nodes:
+  bastion-1:
+    ansible_host: 172.17.0.110
+control_nodes:
+  control-1:
+    ansible_host: 172.17.0.100
+galera_cluster_nocc:
+  mariadb01:
+    ansible_host: 172.17.0.104
+haproxy_nodes:
+  haproxy-primary:
+    ansible_host: 172.17.0.106
