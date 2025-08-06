@@ -3,8 +3,7 @@ stages:
   - check-infra
   - create-infra
   - generate-yml
-  - commit-state1
-  - commit-state2
+  - commit-state
   - compare-config
   - install-hauler
   - copy-certificate
@@ -104,39 +103,8 @@ generate-yml:
 
 
 
-
-commit-state1:
-  stage: commit-state1
-  needs: 
-    - job: create-infra
-      artifacts: true
-    - job: generate-yml
-      artifacts: true  
-  script:
-    - echo "Committing updated tfstate to state branch..."
-  
-    - git config user.email "paragdubey007@gmail.com"
-    - git config user.name "dubeyp"
-    - git remote set-url origin "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git"
-    - git fetch origin main 
-    - git checkout -f main || git checkout -b main
-    - rm -f $ENV_DIR/inventory.yml
-    - git pull --no-rebase origin main
-    # - cp $ENV_DIR/terraform.tfstate.backup $ENV_DIR/
-    # - cp $ENV_DIR/inventory.yml  $ENV_DIR/
-    # - mkdir -p $ENV_DIR
-    # - ls -la
-    - git add .
-    # - git status
-    - git commit -m "update"
-    - git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip
-   
-      
-  only:
-    - 'triggers'
-
-commit-state2:
-  stage: commit-state2
+commit-state:
+  stage: commit-state
   needs: 
     - job: create-infra
       artifacts: true
@@ -167,7 +135,7 @@ commit-state2:
 
 compare-config:
   stage: compare-config
-  needs: [commit-state2]
+  needs: [commit-state]
   script:
     - python3 compareini_yml.py --env dev_s
   artifacts:
