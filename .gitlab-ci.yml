@@ -3,9 +3,9 @@ stages:
   - check-infra
   - create-infra
   - generate-yml
-  - commit-state
-  - compare-config1
-  - compare-config2
+  - commit-state1
+  - commit-state2
+  - compare-config
   - install-hauler
   - copy-certificate
   - install-rke2
