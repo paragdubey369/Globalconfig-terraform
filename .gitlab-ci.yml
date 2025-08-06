@@ -119,25 +119,18 @@ commit-state:
     - git remote set-url origin "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git"
     - git fetch origin main 
     - git checkout -f main || git checkout -b main
-   
     - git pull --no-rebase origin main
-    - rm -f $ENV_DIR/terraform.tfstate 
-    - rm -f $ENV_DIR/terraform.tfstate.backup 
-    - rm -f $ENV_DIR/inventory.yml
-    - cp ${ENV_DIR}/terraform.tfstate  $ENV_DIR/
-    - cp ${ENV_DIR}/terraform.tfstate.backup $ENV_DIR/
-    - cp ${ENV_DIR}/inventory.yml  $ENV_DIR/
-    # - cd $ENV_DIR
+    # - cp $ENV_DIR/terraform.tfstate  $ENV_DIR/
+    # - cp $ENV_DIR/terraform.tfstate.backup $ENV_DIR/
+    # - cp $ENV_DIR/inventory.yml  $ENV_DIR/
+    - mkdir -p $ENV_DIR
     # - ls -la
     - git add $ENV_DIR/
-    - git status
-    - |
-      if ! git diff --cached --quiet; then
-        git commit -m "update"
-        git push origin main
-      else
-        echo "no changes"
-      fi
+    # - git status
+    - git commit -m "update"
+    - git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip
+   
+      
   only:
     - 'triggers'
 
