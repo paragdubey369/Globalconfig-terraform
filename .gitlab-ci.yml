@@ -123,7 +123,7 @@ commit-state:
     - cp "$ENV_DIR"/terraform.tfstate.backup .
     - cp "$ENV_DIR"/inventory.yml .
     - mkdir -p "$ENV_DIR"
-    # - ls -la
+    - cd "$ENV_DIR"
     - git add inventory.yml terraform.tfstate terraform.tfstate.backup
     - if ! git diff --cached --quiet; then
     -   echo "changes detected";
