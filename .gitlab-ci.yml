@@ -18,7 +18,7 @@ variables:
   TF_INPUT: "false"
   TF_env: "dev_s.tfvars"
   COMPARE_ENV: dev_s
-  ANSIBLE_ENV: "dev_s.yml"
+  ANSIBLE_ENV: "dev-s.yml"
   EXPECTED_RESOURCE_COUNT: "5"
 
 fetch-tfstate:
