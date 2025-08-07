@@ -167,7 +167,7 @@ install-hauler:
           echo "hauler already installed"
         fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -185,7 +185,7 @@ copy-certificate:
         cp -f ca.crt /home/ansible/ansible/haproxy-hauler-playbook-main/cert
         cp -f ca.crt /home/ansible/ansible/mariadb-hauler-community-main/cert
       EOF
-  when: manual
+  
   only:
     - 'triggers'
         
@@ -213,7 +213,7 @@ install-rke2:
           echo "rke2 already installed"
         fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -238,7 +238,7 @@ install-haproxy:
           echo "haproxy already installed"
         fi      
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
@@ -263,7 +263,7 @@ install-mariadb:
           echo "mariadb already installed"
         fi
       EOF
-  when: manual
+  
   only:
     - 'triggers'
 
