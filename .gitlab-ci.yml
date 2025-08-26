@@ -88,8 +88,8 @@ create-infra:
     paths:
       - $ENV_DIR/output.json
     expire_in: 2 hours
-  only:
-    - 'triggers'
+  # only:
+  #   - 'triggers'
   
 generate-yml:
   stage: generate-yml
