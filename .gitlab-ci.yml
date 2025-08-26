@@ -18,7 +18,7 @@ variables:
   COMPARE_ENV: dev_s
   ANSIBLE_ENV: "dev-s.yml"
   STATE_NAME: "infra-$COMPARE_ENV"
-  GITLAB_HOST: "https://gitlab.local"
+  GITLAB_HOST: "http://gitlab.local"
   CI_PROJECT_ID: "590"
   CI_JOB_TOKEN: "glpat-***REDACTED***"
 
@@ -75,13 +75,9 @@ create-infra:
   stage: create-infra
   needs: [check-infra]
   script:
-    - source pan.env || true
-    - if [ "$PLAN_EXIT_CODE" != "2"]; then
-        echo "no changes";
-        exit 0;
-      fi
     - cd $ENV_DIR
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - |
     - terraform  init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
