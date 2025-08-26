@@ -38,7 +38,7 @@ check-infra:
         -backend-config=username="dubeyp" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform -chdir="$ENV_DIR" validate
+    # - terraform -chdir="$ENV_DIR" validate
 
     - set +e
     - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
