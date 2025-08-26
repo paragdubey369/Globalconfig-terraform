@@ -27,12 +27,10 @@ check-infra:
   stage: check-infra
   script:
     - cd $ENV_DIR
-    - mkdir -p ~/.terraform.d
-    - cp -r "$ENV_DIR/.terraform.d/"* ~/.terraform.d/
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
-      terraform init \
+      terraform plan \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
