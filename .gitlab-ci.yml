@@ -9,6 +9,7 @@ stages:
   - install-haproxy
   - install-mariadb
   - destroy-infra
+
 variables:
   ENV_DIR: "environments/dev_s"
   TF_APPROVE: "auto-approve"
@@ -57,8 +58,6 @@ check-infra:
       fi
   only:
     - 'triggers'
-
-
   artifacts:
     paths:
       - $ENV_DIR/infra_exists.flag
@@ -92,8 +91,6 @@ create-infra:
   only:
     - 'triggers'
   
-
-
 generate-yml:
   stage: generate-yml
   needs: [create-infra]
@@ -107,7 +104,6 @@ generate-yml:
 
 compare-config:
   stage: compare-config
-  needs: [commit-state]
   script:
     - python3 compareini_yml.py --env dev_s
   artifacts:
