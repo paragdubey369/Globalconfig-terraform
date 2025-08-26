@@ -5,6 +5,7 @@ terraform {
       version = "3.0.1-rc9"
     }
   }
+  backend "http" {}
 }
 provider "proxmox" {                                    
   pm_api_url          = var.pm_api_url
