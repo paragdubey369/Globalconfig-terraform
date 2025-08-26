@@ -69,9 +69,12 @@ check-infra:
 create-infra:
   stage: create-infra
   needs: [check-infra]
-  rules:
-    - if: '$PLAN_EXIT_CODE == "2"'
   script:
+    - source pan.env || true
+    - if [ "$PLAN_EXIT_CODE" != "2"]; then
+        echo "no changes";
+        exit 0;
+      fi
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - terraform -chdir="$ENV_DIR" init \
         -backend-config=address="$TF_ADDRESS" \
@@ -89,6 +92,8 @@ create-infra:
     paths:
       - $ENV_DIR/output.json
     expire_in: 2 hours
+  only:
+    - 'triggers'
   
 generate-yml:
   stage: generate-yml
