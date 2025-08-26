@@ -63,6 +63,8 @@ check-infra:
       - $ENV_DIR/infra_exists.flag
       - $ENV_DIR/output.json
       - $ENV_DIR/tf.plan
+    reports:
+      dotenv: plan.env
     expire_in: 1 hour
 
 
