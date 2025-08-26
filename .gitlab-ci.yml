@@ -95,7 +95,7 @@ create-infra:
           path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
-        direct { exclude = ["*/*"] }
+        direct { exclude = ["*"] }
       }
       EOF
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
