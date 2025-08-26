@@ -65,6 +65,7 @@ check-infra:
       - $ENV_DIR/tf.plan
     expire_in: 1 hour
 
+
 create-infra:
   stage: create-infra
   needs: [check-infra]
@@ -88,8 +89,6 @@ create-infra:
     paths:
       - $ENV_DIR/output.json
     expire_in: 2 hours
-  # only:
-  #   - 'triggers'
   
 generate-yml:
   stage: generate-yml
