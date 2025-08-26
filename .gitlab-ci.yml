@@ -93,7 +93,7 @@ create-infra:
   
 generate-yml:
   stage: generate-yml
-  needs: [create-infra]
+  # needs: [create-infra]
   script:
     - python3 environments/json_to_ini.py $ENV_DIR/output.json $ENV_DIR/inventory.yml
   artifacts:
