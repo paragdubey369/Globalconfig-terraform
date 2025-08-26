@@ -26,9 +26,10 @@ variables:
 check-infra:
   stage: check-infra
   script:
+    - cd $ENV_DIR
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
-    - terraform -chdir="$ENV_DIR" init \
+    - terraform init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -38,10 +39,10 @@ check-infra:
         -backend-config=username="dubeyp" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    # - terraform -chdir="$ENV_DIR" validate
+    - terraform validate
 
     - set +e
-    - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
+    - terraform plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
     - PLAN_RC=$?
     - set -e
     - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
@@ -77,8 +78,9 @@ create-infra:
         echo "no changes";
         exit 0;
       fi
+    - cd $ENV_DIR
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
-    - terraform -chdir="$ENV_DIR" init \
+    - terraform  init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -88,8 +90,8 @@ create-infra:
         -backend-config=username="dubeyp" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform -chdir="$ENV_DIR" apply -$TF_APPROVE -input=$TF_INPUT tf.plan
-    - terraform -chdir="$ENV_DIR" output -json > output.json
+    - terraform  apply -$TF_APPROVE -input=$TF_INPUT tf.plan
+    - terraform  output -json > output.json
   artifacts:
     paths:
       - $ENV_DIR/output.json
