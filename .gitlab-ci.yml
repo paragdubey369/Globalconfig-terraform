@@ -28,12 +28,11 @@ check-infra:
   stage: check-infra
   script:
     - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
-    - cd $ENV_DIR
     - |
       cat > "$TF_CLI_CONFIG_FILE" <<EOF
       provider_installation {
         filesystem_mirror {
-          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/terraform-provider-proxmox_v3.0.1-rc9"
+          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
         direct { exclude = ["*"] }
