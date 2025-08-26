@@ -1,0 +1,9 @@
+provider_installation {
+  filesystem_mirror {
+    path    = "/.terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64"
+    include = ["telmate/proxmox", "hashicorp/*"]
+  }
+  direct {
+    exclude = ["exclude = ["*"]"]
+  }
+}

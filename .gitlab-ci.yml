@@ -21,29 +21,7 @@ variables:
   GITLAB_HOST: "http://gitlab.local"
   CI_PROJECT_ID: "590"
   CI_JOB_TOKEN: "glpat-***REDACTED***"
-
-cache:
-  key: terraform-state-${CI_COMMIT_REF_SLUG}
-  paths:
-    - .terraform/
-    - .terraform.lock.hcl
-
-before_script:
-  - |
-    cat > ${TF_CLI_CONFIG_FILE} << EOF
-    disable_checkpoint = true
-    
-    provider_installation {
-      filesystem_mirror {
-        path    = "${CI_PROJECT_DIR}/.terraform.d"
-        include = ["*/*"]
-      }
-      direct {
-        exclude = ["*/*"]
-      }
-    }
-    EOF
-
+  
 
 
 check-infra:
@@ -72,18 +50,14 @@ check-infra:
     - set -e
     - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
     - |
-      - |
-      if [ "${PLAN_RC}" = "0" ]; then
-        echo " No changes: Infrastructure matches desired state"
-        terraform output -json > output.json 2>/dev/null || echo "{}" > output.json
-        touch infra_exists.flag
-        echo "INFRA_EXISTS=true" >> plan.env
-        echo "SKIP_DEPLOYMENT=true" >> plan.env
-      elif [ "${PLAN_RC}" = "2" ]; then
-        echo " Changes detected: Infrastructure creation/update required"
-        echo "SKIP_DEPLOYMENT=false" >> plan.env
+      if [ "$PLAN_RC" = "0" ]; then
+        echo "No changes: infra matches desired state."
+        terraform -chdir="$ENV_DIR" output -json > output.json
+        touch "$ENV_DIR/infra_exists.flag"
+      elif [ "$PLAN_RC" = "2" ]; then
+        echo "Changes detected: creation/update required."
       else
-        echo "Terraform plan failed with exit code: ${PLAN_RC}" >&2
+        echo "terraform plan failed." >&2
         exit 1
       fi
   only:
@@ -102,11 +76,6 @@ create-infra:
   stage: create-infra
   needs: [check-infra]
   script:
-    - |
-      if [ "${SKIP_DEPLOYMENT}" = "true" ]; then
-        echo " Skipping infrastructure deployment - no changes detected"
-        exit 0
-      fi
     - cd $ENV_DIR
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
