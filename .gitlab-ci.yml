@@ -1,9 +1,7 @@
 stages:
-  - fetch-main
   - check-infra
   - create-infra
   - generate-yml
-  - commit-state
   - compare-config
   - install-hauler
   - copy-certificate
@@ -11,7 +9,6 @@ stages:
   - install-haproxy
   - install-mariadb
   - destroy-infra
-
 variables:
   ENV_DIR: "environments/dev_s"
   TF_APPROVE: "auto-approve"
@@ -19,41 +16,44 @@ variables:
   TF_env: "dev_s.tfvars"
   COMPARE_ENV: dev_s
   ANSIBLE_ENV: "dev-s.yml"
-  EXPECTED_RESOURCE_COUNT: "5"
+  STATE_NAME: "infra-$COMPARE_ENV"
+  GITLAB_HOST: "https://gitlab.local"
+  CI_PROJECT_ID: "590"
+  CI_JOB_TOKEN: "glpat-***REDACTED***"
 
-fetch-tfstate:
-  stage: fetch-main
-  variables:
-    GIT_STRATEGY: fetch
-  script:
-    - echo "Fetching .tfstate from main branch..."
-    - git fetch origin main || echo "No state branch yet"
-    - git checkout main -- $ENV_DIR/terraform.tfstate || echo "No previous tfstate"
-    - git checkout main -- $ENV_DIR/terraform.tfstate.backup || echo "No previous backup"
-    # - git checkout main -- $ENV_DIR/inventory.yml
-  only:
-    - 'triggers'
 
 check-infra:
   stage: check-infra
   script:
-    - echo "Checking for infrastructure state..."
-    - git checkout main -- $ENV_DIR/terraform.tfstate 
-    - cd $ENV_DIR
-    - terraform refresh -var-file=$TF_env -input=$TF_INPUT || echo "Refresh failed"
+    - echo "Init remote backend (GitLab) and check changes via plan…"
+    - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - terraform -chdir="$ENV_DIR" init \
+        -backend-config=address="$TF_ADDRESS" \
+        -backend-config=lock_address="$TF_ADDRESS/lock" \
+        -backend-config=unlock_address="$TF_ADDRESS/lock" \
+        -backend-config=lock_method=POST \
+        -backend-config=unlock_method=DELETE \
+        -backend-config=retry_wait_min=5 \
+        -backend-config=username="dubeyp" \
+        -backend-config=password="$CI_JOB_TOKEN" \
+        -input=false
+    - terraform -chdir="$ENV_DIR" validate
+
+    - set +e
+    - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
+    - PLAN_RC=$?
+    - set -e
+    - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
     - |
-      if [ -f "terraform.tfstate" ]; then
-        RESOURCE_COUNT=$(terraform state list 2>/dev/null | wc -l)
-        echo "Resource count: $RESOURCE_COUNT (expected:$EXPECTED_RESOURCE_COUNT)"
-        if [ "$RESOURCE_COUNT" -ge "$EXPECTED_RESOURCE_COUNT" ]; then
-          echo "Infrastructure exists. Skipping apply."
-          touch infra_exists.flag
-          terraform output -json > output.json
-        else
-          echo "No infrastructure found. Proceeding to create."
-        fi
+      if [ "$PLAN_RC" = "0" ]; then
+        echo "No changes: infra matches desired state."
+        terraform -chdir="$ENV_DIR" output -json > output.json
+        touch "$ENV_DIR/infra_exists.flag"
+      elif [ "$PLAN_RC" = "2" ]; then
+        echo "Changes detected: creation/update required."
       else
-        echo "No terraform.tfstate found. Proceeding to create."
+        echo "terraform plan failed." >&2
+        exit 1
       fi
   only:
     - 'triggers'
@@ -63,24 +63,30 @@ check-infra:
     paths:
       - $ENV_DIR/infra_exists.flag
       - $ENV_DIR/output.json
+      - $ENV_DIR/tf.plan
     expire_in: 1 hour
 
 create-infra:
   stage: create-infra
   needs: [check-infra]
+  rules:
+    - if: '$PLAN_EXIT_CODE == "2"'
   script:
-    - |
-      if [ -f $ENV_DIR/infra_exists.flag ]; then
-        echo "Infra already exists. Skipping apply."
-        exit 0
-      fi
-    - cd $ENV_DIR
-    - terraform apply -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env 
-    - terraform output -json > output.json
+    - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - terraform -chdir="$ENV_DIR" init \
+        -backend-config=address="$TF_ADDRESS" \
+        -backend-config=lock_address="$TF_ADDRESS/lock" \
+        -backend-config=unlock_address="$TF_ADDRESS/lock" \
+        -backend-config=lock_method=POST \
+        -backend-config=unlock_method=DELETE \
+        -backend-config=retry_wait_min=5 \
+        -backend-config=username="dubeyp" \
+        -backend-config=password="$CI_JOB_TOKEN" \
+        -input=false
+    - terraform -chdir="$ENV_DIR" apply -$TF_APPROVE -input=$TF_INPUT tf.plan
+    - terraform -chdir="$ENV_DIR" output -json > output.json
   artifacts:
     paths:
-      - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/terraform.tfstate.backup
       - $ENV_DIR/output.json
     expire_in: 2 hours
   only:
@@ -96,43 +102,6 @@ generate-yml:
   artifacts:
     paths:
       - $ENV_DIR/inventory.yml
-      - $ENV_DIR/terraform.tfstate
-      - $ENV_DIR/terraform.tfstate.backup
-  only:
-    - 'triggers'
-
-
-
-commit-state:
-  stage: commit-state
-  needs: 
-    - job: create-infra
-      artifacts: true
-    - job: generate-yml
-      artifacts: true  
-  script:
-    - echo "Committing updated tfstate to state branch..."
-  
-    - git config user.email "paragdubey007@gmail.com"
-    - git config user.name "dubeyp"
-    - git remote set-url origin "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git"
-    - git fetch origin main 
-    - git checkout -f main || git checkout -b main
-    - git pull --no-rebase origin main
-    - cp "$ENV_DIR"/terraform.tfstate .
-    - cp "$ENV_DIR"/terraform.tfstate.backup .
-    - cp "$ENV_DIR"/inventory.yml .
-    - mkdir -p "$ENV_DIR"
-    - cd "$ENV_DIR"
-    - git add inventory.yml terraform.tfstate terraform.tfstate.backup
-    - if ! git diff --cached --quiet; then
-    -   echo "changes detected";
-    -   git commit -m "update";
-    -   git push "http://dubeyp:glpat-***REDACTED***@gitlab.local/dubeyp/globalconfig.git" HEAD:main -o ci.skip;
-    - else
-    -   echo "no changes";
-    - fi
-      
   only:
     - 'triggers'
 
@@ -272,8 +241,18 @@ install-mariadb:
 destroy-infra:
   stage: destroy-infra
   script:
-    - cd $ENV_DIR
-    - terraform destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
+    - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - terraform -chdir="$ENV_DIR" init \
+        -backend-config=address="$TF_ADDRESS" \
+        -backend-config=lock_address="$TF_ADDRESS/lock" \
+        -backend-config=unlock_address="$TF_ADDRESS/lock" \
+        -backend-config=lock_method=POST \
+        -backend-config=unlock_method=DELETE \
+        -backend-config=retry_wait_min=5 \
+        -backend-config=username="dubeyp" \
+        -backend-config=password="$CI_JOB_TOKEN" \
+        -input=false
+    - terraform -chdir="$ENV_DIR" destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
     - |
       ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
