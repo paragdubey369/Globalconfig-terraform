@@ -35,14 +35,14 @@ check-infra:
           path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
-        direct { exclude = ["*"] }
+        direct { exclude = ["*/*"] }
       }
       EOF
 
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
-      terraform init \
+      terraform -chdir="$ENV_DIR" init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -56,7 +56,7 @@ check-infra:
     - |
 
     - set +e
-    - terraform plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
+    - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
     - PLAN_RC=$?
     - set -e
     - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
@@ -87,10 +87,20 @@ create-infra:
   stage: create-infra
   needs: [check-infra]
   script:
-    - cd $ENV_DIR
+    - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
+    - |
+      cat > "$TF_CLI_CONFIG_FILE" <<EOF
+      provider_installation {
+        filesystem_mirror {
+          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
+          include = ["telmate/proxmox", "hashicorp/*"]
+        }
+        direct { exclude = ["*/*"] }
+      }
+      EOF
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
-    - terraform  init \
+    - terraform -chdir="$ENV_DIR"  init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -100,7 +110,7 @@ create-infra:
         -backend-config=username="dubeyp" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform  apply -$TF_APPROVE -input=$TF_INPUT tf.plan
+    - terraform -chdir="$ENV_DIR"  apply -$TF_APPROVE -input=$TF_INPUT tf.plan
     - terraform  output -json > output.json
   artifacts:
     paths:
