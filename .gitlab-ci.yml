@@ -28,11 +28,12 @@ check-infra:
   stage: check-infra
   script:
     - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraformrc"
+    - cd $ENV_DIR
     - |
       cat > "$TF_CLI_CONFIG_FILE" <<EOF
       provider_installation {
         filesystem_mirror {
-          path    = "$ENV_DIR/.terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/terraform-provider-proxmox_v3.0.1-rc9"
+          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/terraform-provider-proxmox_v3.0.1-rc9"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
         direct { exclude = ["*"] }
@@ -42,7 +43,7 @@ check-infra:
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
-      terraform -chdir="$ENV_DIR" init \
+      terraform init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -56,14 +57,14 @@ check-infra:
     - |
 
     - set +e
-    - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
+    - terraform plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
     - PLAN_RC=$?
     - set -e
     - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
     - |
       if [ "$PLAN_RC" = "0" ]; then
         echo "No changes: infra matches desired state."
-        terraform -chdir="$ENV_DIR" output -json > output.json
+        terraform  output -json > output.json
         touch "$ENV_DIR/infra_exists.flag"
       elif [ "$PLAN_RC" = "2" ]; then
         echo "Changes detected: creation/update required."
