@@ -42,7 +42,7 @@ check-infra:
 
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
-    - cd $ENV_DIR
+    # - cd $ENV_DIR
     - |
       terraform  init \
         -backend-config=address="$TF_ADDRESS" \
