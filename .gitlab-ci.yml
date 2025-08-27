@@ -28,17 +28,19 @@ variables:
 check-infra:
   stage: check-infra
   script:
-    - export TF_CLI_CONFIG_FILE="$ENV_DIR/.terraformrc"
+    - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
     - |
-      cat > "$TF_CLI_CONFIG_FILE" <<EOF
+      cat > "$TF_CLI_CONFIG_FILE" <<'RC'
       provider_installation {
-        filesystem_mirror {
-          path    = ".terraform/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
-          include = ["telmate/proxmox", "hashicorp/*"]
-        }
-        direct { exclude = ["telmate/proxmox"] }
+       filesystem_mirror {
+        path    = "/opt/terraform-providers"
+        include = ["registry.terraform.io/*/*"]
+       }
+       direct {
+        exclude = ["registry.terraform.io/*/*"]   # block internet
+       }
       }
-      EOF
+      RC
 
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
