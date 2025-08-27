@@ -56,10 +56,10 @@ check-infra:
         -backend-config=username="$CI_USERNAME" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform refresh -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
+    - terraform -chdir="$ENV_DIR" refresh -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
     
     - |
-      terraform plan -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
+      terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
       PLAN_EXIT_CODE=$?
   
       case $PLAN_EXIT_CODE in
