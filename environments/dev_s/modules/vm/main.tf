@@ -73,7 +73,7 @@ resource "proxmox_vm_qemu" "vm" {
   lifecycle {
     ignore_changes = [
       bootdisk,           
-      disk[*].format,     
+      disk,     
       tags,              
     ]
   }
