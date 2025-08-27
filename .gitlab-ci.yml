@@ -59,23 +59,21 @@ check-infra:
     - terraform -chdir="$ENV_DIR" refresh -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
     
     - |
+      set +e
       terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
       PLAN_EXIT_CODE=$?
+      set -e
   
-      case $PLAN_EXIT_CODE in
-      0)
-      echo "No changes needed - infrastructure is up to date"
-      touch infra_exists.flag
-      terraform output -json > output.json
-      ;;
-      1)
-      echo "Plan failed"
-      exit 1
-      ;;
-      2)
-      echo "Changes detected - infrastructure will be created/updated"
-      ;;
-      esac
+      if [ "$PLAN_EXIT_CODE" -eq 0 ]; then
+        echo "No changes needed - infra up to date"
+        touch "$ENV_DIR/infra_exists.flag"
+        terraform -chdir="$ENV_DIR" output -json > "$ENV_DIR/output.json"
+      elif [ "$PLAN_EXIT_CODE" -eq 2 ]; then
+        echo "Changes detected - infra will be created/updated"
+        
+      else
+        echo "Plan failed"; exit 1
+      fi
 
   only:
     - 'triggers'
