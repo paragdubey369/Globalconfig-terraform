@@ -69,9 +69,15 @@ resource "proxmox_vm_qemu" "vm" {
     file("${path.module}/ssh.txt")
   ]))
 
-  # lifecycle {                                    # this is introduced so that proxmox do not modify anything on its own 
-  #   ignore_changes = [network, disk]
-  # }
+ 
+  lifecycle {
+    ignore_changes = [
+      bootdisk,           
+      disk[*].format,     
+      tags,              
+    ]
+  }
+
 
 }
 
