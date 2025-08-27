@@ -295,7 +295,7 @@ destroy-infra:
         -backend-config=username="dubeyp" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-      - terraform -chdir="$ENV_DIR" destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
+    - terraform -chdir="$ENV_DIR" destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
     - |
       ssh -o StrictHostKeyChecking=no root@192.168.236.32 <<'EOSSH'
       ssh -o StrictHostKeyChecking=no ansible@172.19.0.30 <<'EOF'
