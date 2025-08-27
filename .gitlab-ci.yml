@@ -127,7 +127,7 @@ create-infra:
         terraform  output -json > output.json
       else
         echo " No plan file found, generating and applying..."
-        terraform  apply -var-file="$TF_env" -auto-approve -input=false
+        terraform -chdir="$ENV_DIR" apply -var-file="$TF_env" -auto-approve -input=false
         terraform output -json > output.json
       fi
   artifacts:
