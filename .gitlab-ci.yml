@@ -37,7 +37,7 @@ check-infra:
         include = ["registry.terraform.io/*/*"]
        }
        direct {
-        exclude = ["registry.terraform.io/*/*"]   # block internet
+        exclude = ["registry.terraform.io/*/*"]   # block 
        }
       }
       RC
@@ -283,6 +283,19 @@ install-mariadb:
 destroy-infra:
   stage: destroy-infra
   script:
+    - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
+    - |
+      cat > "$TF_CLI_CONFIG_FILE" <<'RC'
+      provider_installation {
+       filesystem_mirror {
+        path    = "terraform-providers"
+        include = ["registry.terraform.io/*/*"]
+       }
+       direct {
+        exclude = ["registry.terraform.io/*/*"]   
+       }
+      }
+      RC
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - |
       terraform -chdir="$ENV_DIR" init -reconfigure \
