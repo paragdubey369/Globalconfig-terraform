@@ -33,7 +33,7 @@ check-infra:
       cat > "$TF_CLI_CONFIG_FILE" <<'RC'
       provider_installation {
        filesystem_mirror {
-        path    = "/opt/terraform-providers"
+        path    = "terraform-providers"
         include = ["registry.terraform.io/*/*"]
        }
        direct {
@@ -46,7 +46,7 @@ check-infra:
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     # - cd $ENV_DIR
     - |
-      terraform -chdir="$ENV_DIR" init \
+      terraform -chdir="$ENV_DIR" init -reconfigure \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
