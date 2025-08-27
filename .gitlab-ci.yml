@@ -21,6 +21,7 @@ variables:
   GITLAB_HOST: "http://gitlab.local"
   CI_PROJECT_ID: "590"
   CI_JOB_TOKEN: "glpat-***REDACTED***"
+  CI_USERNAME: "dubeyp"
   
 
 
@@ -32,45 +33,48 @@ check-infra:
       cat > "$TF_CLI_CONFIG_FILE" <<EOF
       provider_installation {
         filesystem_mirror {
-          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
+          path    = ".terraform/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
-        direct { exclude = ["*/*"] }
+        direct { exclude = ["telmate/proxmox"] }
       }
       EOF
 
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - cd $ENV_DIR
     - |
-      terraform -chdir="$ENV_DIR" init \
+      terraform  init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
         -backend-config=lock_method=POST \
         -backend-config=unlock_method=DELETE \
         -backend-config=retry_wait_min=5 \
-        -backend-config=username="dubeyp" \
+        -backend-config=username="$CI_USERNAME" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform validate
+    - terraform refresh -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
+    
     - |
+      terraform plan -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
+      PLAN_EXIT_CODE=$?
+  
+      case $PLAN_EXIT_CODE in
+      0)
+      echo "No changes needed - infrastructure is up to date"
+      touch infra_exists.flag
+      terraform output -json > output.json
+      ;;
+      1)
+      echo "Plan failed"
+      exit 1
+      ;;
+      2)
+      echo "Changes detected - infrastructure will be created/updated"
+      ;;
+      esac
 
-    - set +e
-    - terraform -chdir="$ENV_DIR" plan -var-file="$TF_env" -out=tf.plan -detailed-exitcode
-    - PLAN_RC=$?
-    - set -e
-    - echo "PLAN_EXIT_CODE=$PLAN_RC" | tee plan.env
-    - |
-      if [ "$PLAN_RC" = "0" ]; then
-        echo "No changes: infra matches desired state."
-        terraform  output -json > output.json
-        touch "$ENV_DIR/infra_exists.flag"
-      elif [ "$PLAN_RC" = "2" ]; then
-        echo "Changes detected: creation/update required."
-      else
-        echo "terraform plan failed." >&2
-        exit 1
-      fi
   only:
     - 'triggers'
   artifacts:
@@ -92,26 +96,38 @@ create-infra:
       cat > "$TF_CLI_CONFIG_FILE" <<EOF
       provider_installation {
         filesystem_mirror {
-          path    = ".terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
+          path    = ".terraform/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
           include = ["telmate/proxmox", "hashicorp/*"]
         }
-        direct { exclude = ["*"] }
+        direct { exclude = ["telmate/proxmox"] }
       }
       EOF
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
+    - cd $ENV_DIR
     - |
-    - terraform -chdir="$ENV_DIR"  init \
+    - terraform  init \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
         -backend-config=lock_method=POST \
         -backend-config=unlock_method=DELETE \
         -backend-config=retry_wait_min=5 \
-        -backend-config=username="dubeyp" \
+        -backend-config=username="$CI_USERNAME" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform -chdir="$ENV_DIR"  apply -$TF_APPROVE -input=$TF_INPUT tf.plan
-    - terraform  output -json > output.json
+    - |
+      if [ -f "$ENV_DIR/infra_exists.flag" ]; then
+        echo "Infrastructure already exists and is up to date - skipping apply"
+        
+      elif [ -f "$ENV_DIR/tfplan" ]; then
+        echo "Applying pre-generated plan..."
+        terraform apply -input=false tfplan
+        terraform  output -json > output.json
+      else
+        echo " No plan file found, generating and applying..."
+        terraform  apply -var-file="$TF_env" -auto-approve -input=false
+        terraform output -json > output.json
+      fi
   artifacts:
     paths:
       - $ENV_DIR/output.json
