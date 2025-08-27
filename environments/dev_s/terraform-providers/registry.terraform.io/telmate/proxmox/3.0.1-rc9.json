@@ -1,0 +1,16 @@
+{
+  "archives": {
+    "linux_amd64": {
+      "hashes": [
+        "h1:TAkzCbpjazX/iNqkodNI63OvqtP6NsWI3CHcHdjieXY="
+      ],
+      "url": "terraform-provider-proxmox_3.0.1-rc9_linux_amd64.zip"
+    },
+    "linux_arm64": {
+      "hashes": [
+        "h1:94auCs8JQDps4jwQxLME2Abh29x2UK575CmsZm7+Btg="
+      ],
+      "url": "terraform-provider-proxmox_3.0.1-rc9_linux_arm64.zip"
+    }
+  }
+}

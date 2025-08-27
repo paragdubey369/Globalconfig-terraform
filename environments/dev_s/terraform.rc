@@ -1,9 +1,13 @@
-provider_installation {
-  filesystem_mirror {
-    path    = "<repo>/.terraform.d/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/terraform-provider-proxmox_v3.0.1-rc9"
-    include = ["telmate/proxmox", "hashicorp/*"]
-  }
-  direct {
-    exclude = {exclude = ["*/*"]}
-  }
-}
+ - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
+    - |
+      cat > "$TF_CLI_CONFIG_FILE" <<'RC'
+      provider_installation {
+       filesystem_mirror {
+        path    = "terraform-providers"
+        include = ["registry.terraform.io/*/*"]
+       }
+       direct {
+        exclude = ["registry.terraform.io/*/*"]   # block internet
+       }
+      }
+      RC
