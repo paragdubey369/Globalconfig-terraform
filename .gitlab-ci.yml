@@ -44,9 +44,9 @@ check-infra:
 
     - echo "Init remote backend (GitLab) and check changes via plan…"
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
-    # - cd $ENV_DIR
+    - cd $ENV_DIR
     - |
-      terraform -chdir="$ENV_DIR" init -reconfigure \
+      terraform init -reconfigure \
         -backend-config=address="$TF_ADDRESS" \
         -backend-config=lock_address="$TF_ADDRESS/lock" \
         -backend-config=unlock_address="$TF_ADDRESS/lock" \
@@ -56,10 +56,10 @@ check-infra:
         -backend-config=username="$CI_USERNAME" \
         -backend-config=password="$CI_JOB_TOKEN" \
         -input=false
-    - terraform refresh -chdir="$ENV_DIR" -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
+    - terraform refresh -var-file="$TF_env" -input="$TF_INPUT" || echo "Refresh failed"
     
     - |
-      terraform plan -chdir="$ENV_DIR" -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
+      terraform plan -var-file="$TF_env" -input=false -detailed-exitcode -out=tf.plan
       PLAN_EXIT_CODE=$?
   
       case $PLAN_EXIT_CODE in
@@ -95,15 +95,17 @@ create-infra:
   script:
     - export TF_CLI_CONFIG_FILE="$ENV_DIR/terraform.rc"
     - |
-      cat > "$TF_CLI_CONFIG_FILE" <<EOF
+      cat > "$TF_CLI_CONFIG_FILE" <<'RC'
       provider_installation {
-        filesystem_mirror {
-          path    = ".terraform/plugins/registry.terraform.io/telmate/proxmox/3.0.1-rc9/linux_amd64/"
-          include = ["telmate/proxmox", "hashicorp/*"]
-        }
-        direct { exclude = ["telmate/proxmox"] }
+       filesystem_mirror {
+        path    = "terraform-providers"
+        include = ["registry.terraform.io/*/*"]
+       }
+       direct {
+        exclude = ["registry.terraform.io/*/*"]   # block internet
+       }
       }
-      EOF
+      RC
     - export TF_ADDRESS="$GITLAB_HOST/api/v4/projects/$CI_PROJECT_ID/terraform/state/$STATE_NAME"
     - cd $ENV_DIR
     - |
