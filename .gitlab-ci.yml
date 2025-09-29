@@ -18,9 +18,9 @@ variables:
   COMPARE_ENV: dev_s
   ANSIBLE_ENV: "dev-s.yml"
   STATE_NAME: "infra-$COMPARE_ENV"
-  GITLAB_HOST: "http://gitlab.local"
+  GITLAB_HOST: "http://github.com"
   CI_PROJECT_ID: "590"
-  CI_JOB_TOKEN: "glpat-***REDACTED***"
+  CI_JOB_TOKEN: "$JOBTOKEN"
   CI_USERNAME: "dubeyp"
   
 
@@ -165,7 +165,7 @@ install-hauler:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<EOSSH
+      ssh -o StrictHostKeyChecking=no root@Proxmox <<EOSSH
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<EOF
         set -ex
         cd /home/ansible/ansible/hauler-registry-fileserver-setup-main
@@ -188,7 +188,7 @@ copy-certificate:
   script:
     - echo "copying certificate"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no root@proxmox <<'EOSSH'
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
         set -ex
         cd /home/ansible/ansible/hauler-registry-fileserver-setup-main/CA-Certs
@@ -211,7 +211,7 @@ install-rke2:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<EOSSH
+      ssh -o StrictHostKeyChecking=no root@proxmox <<EOSSH
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<EOF
         set -ex
         cd /home/ansible/ansible/rke2-airgapped-deployment-hauler-main
@@ -236,7 +236,7 @@ install-haproxy:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<EOSSH
+      ssh -o StrictHostKeyChecking=no root@proxmox <<EOSSH
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<EOF
         set -ex
         cd /home/ansible/ansible/haproxy-hauler-playbook-main
@@ -261,7 +261,7 @@ install-mariadb:
   script:
     - echo "now installing different components on the vm's"
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<EOSSH
+      ssh -o StrictHostKeyChecking=no root@proxmox <<EOSSH
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<EOF
         set -ex
         cd /home/ansible/ansible/mariadb-hauler-community-main
@@ -310,7 +310,7 @@ destroy-infra:
         -input=false
     - terraform -chdir="$ENV_DIR" destroy -$TF_APPROVE -input=$TF_INPUT -var-file=$TF_env
     - |
-      ssh -o StrictHostKeyChecking=no root@gitlab.local <<'EOSSH'
+      ssh -o StrictHostKeyChecking=no root@proxmox <<'EOSSH'
       ssh -o StrictHostKeyChecking=no ansible@priv-172-19-0-30.local <<'EOF'
         rm -f /home/ansible/ansible/hauler-registry-fileserver-setup-main/flags/hauler_installed.flag
         rm -f /home/ansible/ansible/rke2-airgapped-deployment-hauler-main/flags/rke2_installed.flag
@@ -320,3 +320,4 @@ destroy-infra:
   when: manual
   only:
     - 'triggers'
+
