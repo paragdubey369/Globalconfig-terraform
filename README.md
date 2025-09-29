@@ -7,6 +7,9 @@ A brief description of what this project does and who it's for
 
 This repository contains an **infrastructure automation framework** designed for **air-gapped datacenters** using **Terraform, Ansible, and GitLab CI/CD**.  
 The project was developed as part of a thesis and internship at **Hitachi Rail** (2025), focusing on **railway automation software deployment** in restricted, offline environments.
+<div align="center">
+  <img src="airgapped terraform.png" alt=" Banner">
+</div>
 
 ---
 
