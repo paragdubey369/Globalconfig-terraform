@@ -87,7 +87,7 @@ https://github.com/paragdubey369/Globalconfig-terraform.git
 
 Provision Infrastructure
 cd terraform/envs/uat
-terraform init
+terraform init (GITLAB BACKEND)
 terraform plan -var-file=uat.tfvars
 terraform apply -var-file=uat.tfvars
 
