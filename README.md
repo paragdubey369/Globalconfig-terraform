@@ -37,12 +37,15 @@ The project was developed as part of a thesis and internship at **Hitachi Rail**
      - **MariaDB Galera Cluster + MaxScale**
      - **HAProxy** for load balancing
      - **Hauler** for offline container/image distribution
-
 3. **GitLab CI/CD**  
-   - Stages: `check-infra → plan → create-infra → configure-platform → install-apps → destroy-infra`  
-   - Ensures idempotent deployments.  
-   - Tracks state with `.tfstate` stored in a GitLab branch.  
-   - Integrates with **Ansible Runner** via SSH for platform provisioning.
+   - Multi-stage pipeline that enforces **infrastructure checks** before provisioning.  
+   - **Stages:**
+     1. `check-infra` → validates `.tfstate` and compares with desired config.  
+     2. `plan` → runs `terraform plan` to preview changes.  
+     3. `create-infra` → provisions infra only if needed.  
+     4. `configure-platform` → triggers Ansible Runner for RKE2, HAProxy, MariaDB.  
+     5. `install-apps` → installs workloads (via Helm, WIP).  
+     6. `destroy-infra` → optional manual stage to tear down resources
 
 ---
 
@@ -116,6 +119,18 @@ Roadmap
  Enhance security hardening (vaulted secrets, CIS compliance)
 
  Expand template repository for external projects
+
+## GITLAB flow
+flowchart TD
+    A[Commit/Tag Push] --> B[check-infra]
+    B -->|Infra exists| C[Skip Provision]
+    B -->|Infra missing| D[plan]
+    D --> E[create-infra]
+    E --> F[configure-platform]
+    F --> G[install-apps]
+    G --> H{Manual}
+    H -->|Destroy| I[destroy-infra]
+
 
 
 ## License
